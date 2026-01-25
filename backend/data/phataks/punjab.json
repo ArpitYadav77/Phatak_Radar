@@ -1,0 +1,228 @@
+[
+  {
+    "phatakId": "PHK_PB_NR_001",
+    "name": "Ludhiana Junction LC",
+    "state": "Punjab",
+    "district": "Ludhiana",
+    "railwayZone": "NR",
+    "railLineName": "Delhi-Amritsar Mainline",
+    "lat": 30.9010,
+    "lng": 75.8573,
+    "nearbyStations": ["Ludhiana", "Jagraon"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12469", "trainName": "Delhi-Ludhiana Express", "scheduledTime": "11:30", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12001", "trainName": "Shatabdi Express", "scheduledTime": "08:45", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12013", "trainName": "Amritsar Shatabdi", "scheduledTime": "09:15", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12037", "trainName": "Punjab Mail", "scheduledTime": "01:20", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12715", "trainName": "Sachkhand Express", "scheduledTime": "03:45", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12487", "trainName": "Bathinda-Delhi Express", "scheduledTime": "02:15", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "14631", "trainName": "Firozepur-Delhi Express", "scheduledTime": "03:30", "direction": "DOWN", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_002",
+    "name": "Amritsar Junction LC",
+    "state": "Punjab",
+    "district": "Amritsar",
+    "railwayZone": "NR",
+    "railLineName": "Delhi-Attari Line",
+    "lat": 31.6340,
+    "lng": 74.8723,
+    "nearbyStations": ["Amritsar", "Attari"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12013", "trainName": "Amritsar Shatabdi", "scheduledTime": "10:45", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12037", "trainName": "Punjab Mail", "scheduledTime": "05:15", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12715", "trainName": "Sachkhand Express", "scheduledTime": "23:30", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12497", "trainName": "Shan-e-Punjab", "scheduledTime": "16:45", "direction": "DOWN", "closureDuration": 2 },
+      { "trainNumber": "18238", "trainName": "Chhatisgarh Express", "scheduledTime": "19:20", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_003",
+    "name": "Jalandhar City LC",
+    "state": "Punjab",
+    "district": "Jalandhar",
+    "railwayZone": "NR",
+    "railLineName": "Delhi-Jammu Mainline",
+    "lat": 31.3260,
+    "lng": 75.5762,
+    "nearbyStations": ["Jalandhar City", "Phagwara"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12013", "trainName": "Amritsar Shatabdi", "scheduledTime": "09:45", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12037", "trainName": "Punjab Mail", "scheduledTime": "03:10", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12053", "trainName": "Jalandhar-Pathankot Passenger", "scheduledTime": "05:50", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12715", "trainName": "Sachkhand Express", "scheduledTime": "02:00", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12481", "trainName": "Jodhpur-Jammu Express", "scheduledTime": "04:45", "direction": "UP", "closureDuration": 4 },
+      { "trainNumber": "12497", "trainName": "Shan-e-Punjab", "scheduledTime": "18:15", "direction": "DOWN", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_004",
+    "name": "Patiala LC",
+    "state": "Punjab",
+    "district": "Patiala",
+    "railwayZone": "NR",
+    "railLineName": "Rajpura-Patiala Line",
+    "lat": 30.3398,
+    "lng": 76.3869,
+    "nearbyStations": ["Patiala", "Rajpura"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12469", "trainName": "Delhi-Ludhiana Express", "scheduledTime": "09:30", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12037", "trainName": "Punjab Mail", "scheduledTime": "23:45", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12715", "trainName": "Sachkhand Express", "scheduledTime": "05:20", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12487", "trainName": "Bathinda-Delhi Express", "scheduledTime": "03:45", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12497", "trainName": "Shan-e-Punjab", "scheduledTime": "20:10", "direction": "DOWN", "closureDuration": 2 },
+      { "trainNumber": "18238", "trainName": "Chhatisgarh Express", "scheduledTime": "18:45", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_023",
+    "name": "Patiala Phatak 23",
+    "state": "Punjab",
+    "district": "Patiala",
+    "railwayZone": "NR",
+    "railLineName": "Rajpura-Patiala Line",
+    "lat": 30.3356,
+    "lng": 76.3825,
+    "nearbyStations": ["Patiala", "Rajpura"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12469", "trainName": "Delhi-Ludhiana Express", "scheduledTime": "09:32", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12037", "trainName": "Punjab Mail", "scheduledTime": "23:47", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12715", "trainName": "Sachkhand Express", "scheduledTime": "05:18", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12487", "trainName": "Bathinda-Delhi Express", "scheduledTime": "03:43", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12497", "trainName": "Shan-e-Punjab", "scheduledTime": "20:08", "direction": "DOWN", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_024",
+    "name": "Patiala Phatak 24",
+    "state": "Punjab",
+    "district": "Patiala",
+    "railwayZone": "NR",
+    "railLineName": "Rajpura-Patiala Line",
+    "lat": 30.3315,
+    "lng": 76.3780,
+    "nearbyStations": ["Patiala", "Rajpura"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12469", "trainName": "Delhi-Ludhiana Express", "scheduledTime": "09:35", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12037", "trainName": "Punjab Mail", "scheduledTime": "23:50", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12715", "trainName": "Sachkhand Express", "scheduledTime": "05:15", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12487", "trainName": "Bathinda-Delhi Express", "scheduledTime": "03:40", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12497", "trainName": "Shan-e-Punjab", "scheduledTime": "20:05", "direction": "DOWN", "closureDuration": 2 },
+      { "trainNumber": "18238", "trainName": "Chhatisgarh Express", "scheduledTime": "18:42", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_005",
+    "name": "Bathinda Junction LC",
+    "state": "Punjab",
+    "district": "Bathinda",
+    "railwayZone": "NR",
+    "railLineName": "Delhi-Bathinda Line",
+    "lat": 30.2110,
+    "lng": 74.9455,
+    "nearbyStations": ["Bathinda", "Mansa"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12487", "trainName": "Bathinda-Delhi Express", "scheduledTime": "20:50", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12481", "trainName": "Jodhpur-Jammu Express", "scheduledTime": "01:30", "direction": "UP", "closureDuration": 4 },
+      { "trainNumber": "18238", "trainName": "Chhatisgarh Express", "scheduledTime": "22:15", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_006",
+    "name": "Pathankot Junction LC",
+    "state": "Punjab",
+    "district": "Pathankot",
+    "railwayZone": "NR",
+    "railLineName": "Pathankot-Jammu Line",
+    "lat": 32.2646,
+    "lng": 75.6520,
+    "nearbyStations": ["Pathankot", "Chakki Bank"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12053", "trainName": "Jalandhar-Pathankot Passenger", "scheduledTime": "09:25", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12481", "trainName": "Jodhpur-Jammu Express", "scheduledTime": "07:20", "direction": "UP", "closureDuration": 4 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_007",
+    "name": "Firozpur Cantonment LC",
+    "state": "Punjab",
+    "district": "Firozpur",
+    "railwayZone": "NR",
+    "railLineName": "Ludhiana-Firozpur Line",
+    "lat": 30.9257,
+    "lng": 74.6142,
+    "nearbyStations": ["Firozpur Cantt", "Fazilka"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "14631", "trainName": "Firozepur-Delhi Express", "scheduledTime": "19:35", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "12037", "trainName": "Punjab Mail", "scheduledTime": "06:10", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_008",
+    "name": "Moga LC",
+    "state": "Punjab",
+    "district": "Moga",
+    "railwayZone": "NR",
+    "railLineName": "Ludhiana-Firozpur Line",
+    "lat": 30.8080,
+    "lng": 75.1705,
+    "nearbyStations": ["Moga", "Jagraon"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12487", "trainName": "Bathinda-Delhi Express", "scheduledTime": "22:30", "direction": "DOWN", "closureDuration": 3 },
+      { "trainNumber": "14631", "trainName": "Firozepur-Delhi Express", "scheduledTime": "21:15", "direction": "DOWN", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_009",
+    "name": "Hoshiarpur LC",
+    "state": "Punjab",
+    "district": "Hoshiarpur",
+    "railwayZone": "NR",
+    "railLineName": "Jalandhar-Pathankot Line",
+    "lat": 31.5333,
+    "lng": 75.9100,
+    "nearbyStations": ["Hoshiarpur", "Mukerian"],
+    "gateType": "UNMANNED",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12053", "trainName": "Jalandhar-Pathankot Passenger", "scheduledTime": "07:35", "direction": "UP", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_PB_NR_010",
+    "name": "Sangrur LC",
+    "state": "Punjab",
+    "district": "Sangrur",
+    "railwayZone": "NR",
+    "railLineName": "Dhuri-Sangrur Line",
+    "lat": 30.2451,
+    "lng": 75.8415,
+    "nearbyStations": ["Sangrur", "Dhuri"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "18238", "trainName": "Chhatisgarh Express", "scheduledTime": "20:30", "direction": "UP", "closureDuration": 3 }
+    ]
+  }
+]

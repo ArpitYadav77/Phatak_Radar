@@ -1,0 +1,329 @@
+[
+  {
+    "phatakId": "PHK_MH_CR_001",
+    "name": "Dadar East Level Crossing",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "railwayZone": "CR",
+    "railLineName": "Mumbai-Pune Mainline",
+    "lat": 19.0176,
+    "lng": 72.8467,
+    "nearbyStations": ["Dadar", "Matunga"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12127", "trainName": "Mumbai-Pune Intercity", "scheduledTime": "06:10", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12123", "trainName": "Deccan Queen", "scheduledTime": "07:15", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "11301", "trainName": "CSMT-Solapur Express", "scheduledTime": "22:30", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12125", "trainName": "Pragati Express", "scheduledTime": "17:45", "direction": "DOWN", "closureDuration": 2 },
+      { "trainNumber": "12163", "trainName": "Chennai Mail", "scheduledTime": "23:50", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_002",
+    "name": "Kurla Level Crossing",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "railwayZone": "CR",
+    "railLineName": "Central Suburban Line",
+    "lat": 19.0728,
+    "lng": 72.8826,
+    "nearbyStations": ["Kurla", "Vidyavihar"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12127", "trainName": "Mumbai-Pune Intercity", "scheduledTime": "06:25", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12123", "trainName": "Deccan Queen", "scheduledTime": "07:30", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "11301", "trainName": "CSMT-Solapur Express", "scheduledTime": "22:45", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_003",
+    "name": "Thane Creek Bridge LC",
+    "state": "Maharashtra",
+    "district": "Thane",
+    "railwayZone": "CR",
+    "railLineName": "Trans-Harbour Line",
+    "lat": 19.2183,
+    "lng": 72.9781,
+    "nearbyStations": ["Thane", "Airoli"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12127", "trainName": "Mumbai-Pune Intercity", "scheduledTime": "06:45", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "11301", "trainName": "CSMT-Solapur Express", "scheduledTime": "23:10", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_004",
+    "name": "Kalyan Junction LC",
+    "state": "Maharashtra",
+    "district": "Thane",
+    "railwayZone": "CR",
+    "railLineName": "Mumbai-Chennai Mainline",
+    "lat": 19.2403,
+    "lng": 73.1305,
+    "nearbyStations": ["Kalyan", "Dombivli"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12127", "trainName": "Mumbai-Pune Intercity", "scheduledTime": "07:00", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12123", "trainName": "Deccan Queen", "scheduledTime": "08:05", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12163", "trainName": "Chennai Mail", "scheduledTime": "01:15", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_005",
+    "name": "Lonavala Ghat LC",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "railwayZone": "CR",
+    "railLineName": "Mumbai-Pune Line",
+    "lat": 18.7481,
+    "lng": 73.4076,
+    "nearbyStations": ["Lonavala", "Khandala"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12127", "trainName": "Mumbai-Pune Intercity", "scheduledTime": "08:15", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12123", "trainName": "Deccan Queen", "scheduledTime": "09:20", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12125", "trainName": "Pragati Express", "scheduledTime": "14:30", "direction": "DOWN", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_006",
+    "name": "Pune Station Road LC",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "railwayZone": "CR",
+    "railLineName": "Pune-Solapur Line",
+    "lat": 18.5285,
+    "lng": 73.8744,
+    "nearbyStations": ["Pune", "Hadapsar"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12127", "trainName": "Mumbai-Pune Intercity", "scheduledTime": "09:30", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12123", "trainName": "Deccan Queen", "scheduledTime": "10:35", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "11301", "trainName": "CSMT-Solapur Express", "scheduledTime": "03:45", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12125", "trainName": "Pragati Express", "scheduledTime": "13:00", "direction": "DOWN", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_007",
+    "name": "Nagpur Central LC",
+    "state": "Maharashtra",
+    "district": "Nagpur",
+    "railwayZone": "CR",
+    "railLineName": "Nagpur-Mumbai Line",
+    "lat": 21.1458,
+    "lng": 79.0882,
+    "nearbyStations": ["Nagpur", "Ajni"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12809", "trainName": "Howrah-Mumbai Mail", "scheduledTime": "05:30", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12859", "trainName": "Gitanjali Express", "scheduledTime": "19:45", "direction": "DOWN", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_008",
+    "name": "Wardha Road LC",
+    "state": "Maharashtra",
+    "district": "Nagpur",
+    "railwayZone": "CR",
+    "railLineName": "Howrah-Nagpur-Mumbai Line",
+    "lat": 21.1074,
+    "lng": 79.0512,
+    "nearbyStations": ["Wardha", "Nagpur"],
+    "gateType": "UNMANNED",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12809", "trainName": "Howrah-Mumbai Mail", "scheduledTime": "04:50", "direction": "UP", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_009",
+    "name": "Nashik Road LC",
+    "state": "Maharashtra",
+    "district": "Nashik",
+    "railwayZone": "CR",
+    "railLineName": "Mumbai-Nashik Line",
+    "lat": 19.9975,
+    "lng": 73.7898,
+    "nearbyStations": ["Nashik Road", "Manmad"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12071", "trainName": "Mumbai-Manmad Express", "scheduledTime": "11:20", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "12072", "trainName": "Manmad-Mumbai Express", "scheduledTime": "16:45", "direction": "DOWN", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_010",
+    "name": "Aurangabad Cantonment LC",
+    "state": "Maharashtra",
+    "district": "Aurangabad",
+    "railwayZone": "CR",
+    "railLineName": "Manmad-Kacheguda Line",
+    "lat": 19.8762,
+    "lng": 75.3433,
+    "nearbyStations": ["Aurangabad", "Jalna"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "17057", "trainName": "Devagiri Express", "scheduledTime": "07:10", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "17058", "trainName": "Devagiri Express", "scheduledTime": "20:30", "direction": "DOWN", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_011",
+    "name": "Solapur Junction LC",
+    "state": "Maharashtra",
+    "district": "Solapur",
+    "railwayZone": "CR",
+    "railLineName": "Pune-Solapur-Guntakal Line",
+    "lat": 17.6599,
+    "lng": 75.9064,
+    "nearbyStations": ["Solapur", "Kurduvadi"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "11301", "trainName": "CSMT-Solapur Express", "scheduledTime": "06:20", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "11302", "trainName": "Solapur-CSMT Express", "scheduledTime": "21:50", "direction": "DOWN", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_012",
+    "name": "Amravati LC",
+    "state": "Maharashtra",
+    "district": "Amravati",
+    "railwayZone": "CR",
+    "railLineName": "Badnera-Amravati Line",
+    "lat": 20.9320,
+    "lng": 77.7523,
+    "nearbyStations": ["Amravati", "Badnera"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "51285", "trainName": "Badnera-Amravati Passenger", "scheduledTime": "06:45", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "51286", "trainName": "Amravati-Badnera Passenger", "scheduledTime": "18:15", "direction": "DOWN", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_013",
+    "name": "Akola Junction LC",
+    "state": "Maharashtra",
+    "district": "Akola",
+    "railwayZone": "CR",
+    "railLineName": "Howrah-Mumbai Mainline",
+    "lat": 20.7002,
+    "lng": 77.0082,
+    "nearbyStations": ["Akola", "Murtajapur"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "12809", "trainName": "Howrah-Mumbai Mail", "scheduledTime": "02:15", "direction": "UP", "closureDuration": 3 },
+      { "trainNumber": "12859", "trainName": "Gitanjali Express", "scheduledTime": "22:40", "direction": "DOWN", "closureDuration": 3 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_014",
+    "name": "Sangli Miraj Road LC",
+    "state": "Maharashtra",
+    "district": "Sangli",
+    "railwayZone": "CR",
+    "railLineName": "Miraj-Londa Line",
+    "lat": 16.8524,
+    "lng": 74.5815,
+    "nearbyStations": ["Sangli", "Miraj"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "11029", "trainName": "Mumbai-Kolhapur Express", "scheduledTime": "12:45", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "11030", "trainName": "Kolhapur-Mumbai Express", "scheduledTime": "15:30", "direction": "DOWN", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_015",
+    "name": "Kolhapur ST Stand LC",
+    "state": "Maharashtra",
+    "district": "Kolhapur",
+    "railwayZone": "CR",
+    "railLineName": "Miraj-Kolhapur Branch",
+    "lat": 16.7050,
+    "lng": 74.2433,
+    "nearbyStations": ["Kolhapur", "Jaysingpur"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN",
+    "dailySchedule": [
+      { "trainNumber": "11029", "trainName": "Mumbai-Kolhapur Express", "scheduledTime": "14:00", "direction": "UP", "closureDuration": 2 },
+      { "trainNumber": "11030", "trainName": "Kolhapur-Mumbai Express", "scheduledTime": "14:10", "direction": "DOWN", "closureDuration": 2 }
+    ]
+  },
+  {
+    "phatakId": "PHK_MH_CR_016",
+    "name": "Nanded Junction LC",
+    "state": "Maharashtra",
+    "district": "Nanded",
+    "railwayZone": "SCR",
+    "railLineName": "Hyderabad-Nanded Line",
+    "lat": 19.1383,
+    "lng": 77.3210,
+    "nearbyStations": ["Nanded", "Mudkhed"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN"
+  },
+  {
+    "phatakId": "PHK_MH_CR_017",
+    "name": "Jalgaon Junction LC",
+    "state": "Maharashtra",
+    "district": "Jalgaon",
+    "railwayZone": "CR",
+    "railLineName": "Mumbai-Bhusaval Line",
+    "lat": 21.0077,
+    "lng": 75.5626,
+    "nearbyStations": ["Jalgaon", "Bhusaval"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN"
+  },
+  {
+    "phatakId": "PHK_MH_CR_018",
+    "name": "Dhule Road LC",
+    "state": "Maharashtra",
+    "district": "Dhule",
+    "railwayZone": "CR",
+    "railLineName": "Manmad-Surat Line",
+    "lat": 20.9017,
+    "lng": 74.7749,
+    "nearbyStations": ["Dhule", "Nandurbar"],
+    "gateType": "MANUAL",
+    "defaultStatus": "OPEN"
+  },
+  {
+    "phatakId": "PHK_MH_CR_019",
+    "name": "Latur Road LC",
+    "state": "Maharashtra",
+    "district": "Latur",
+    "railwayZone": "CR",
+    "railLineName": "Parbhani-Latur Line",
+    "lat": 18.4088,
+    "lng": 76.5604,
+    "nearbyStations": ["Latur", "Osmanabad"],
+    "gateType": "UNMANNED",
+    "defaultStatus": "OPEN"
+  },
+  {
+    "phatakId": "PHK_MH_CR_020",
+    "name": "Ratnagiri Coastal LC",
+    "state": "Maharashtra",
+    "district": "Ratnagiri",
+    "railwayZone": "KR",
+    "railLineName": "Konkan Railway",
+    "lat": 16.9944,
+    "lng": 73.3002,
+    "nearbyStations": ["Ratnagiri", "Khed"],
+    "gateType": "AUTOMATIC",
+    "defaultStatus": "OPEN"
+  }
+]
