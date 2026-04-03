@@ -9,9 +9,13 @@ const connectDB = async () => {
     }
 
     await mongoose.connect(mongoUri);
-    console.log("MongoDB Connected");
+    console.log("✅ MongoDB Connected successfully");
   } catch (err) {
-    console.error(err);
+    console.error("❌ MongoDB Connection Error:");
+    console.error(err.message);
+    if (process.env.NODE_ENV === "production" && !process.env.MONGO_URI) {
+      console.warn("⚠️  Are you missing MONGO_URI in your Vercel environment variables?");
+    }
     process.exit(1);
   }
 };

@@ -2,8 +2,16 @@ import Train from "../models/Train.model.js";
 import Phatak from "../models/Phatak.model.js";
 import { request } from 'undici';
 
-// API call to RailRadar
-const { statusCode, body } = await request('https://railradar.in/docs');
+// API call to RailRadar (wrapped in try-catch to prevent startup failure)
+let railRadarInfo = null;
+try {
+  const { statusCode, body } = await request('https://railradar.in/docs');
+  if (statusCode === 200) {
+    railRadarInfo = await body.json();
+  }
+} catch (err) {
+  console.warn("⚠️ Could not connect to RailRadar API, simulation will use local logic only.");
+}
 
 // Configuration
 const SIMULATION_TICK_MS = 5000; // Update every 5 seconds
