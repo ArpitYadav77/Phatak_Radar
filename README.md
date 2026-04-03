@@ -125,7 +125,7 @@ npm install
 Backend `.env`:
 
 ```env
-MONGODB_URI=mongodb://localhost:27017/phatak_radar
+MONGO_URI=mongodb://localhost:27017/phatak_radar
 PORT=5000
 ```
 
@@ -134,6 +134,22 @@ Frontend `.env`:
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
+
+For production (Vercel), set `VITE_API_URL` to your deployed backend URL, for example:
+
+```env
+VITE_API_URL=https://your-backend-project.vercel.app/api
+```
+
+If frontend and backend are served from the same origin, `VITE_API_URL` can be omitted and frontend will use `/api`.
+
+### Vercel Backend Notes
+
+- Deploy the `backend/` folder as a separate Vercel project.
+- `backend/vercel.json` routes all requests to the Express handler.
+- Set these backend environment variables in Vercel:
+  - `MONGO_URI` (or `MONGODB_URI`)
+  - `CORS_ORIGIN` (frontend URL, optional comma-separated list)
 
 5. **Start MongoDB**
 
