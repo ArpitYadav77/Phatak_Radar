@@ -1,152 +1,149 @@
 /**
  * PHATAK CONTROLLER
- * 
+ *
  * Handles API requests for railway level crossing data.
- * 
- * Key endpoints:
- * - GET /api/phataks - Get all phataks (use with caution, can be slow with large datasets)
- * - GET /api/phataks/bbox - Get phataks within map bounds (RECOMMENDED for map view)
- * - GET /api/phataks/state/:state - Get phataks by state
- * - GET /api/phataks/zone/:zone - Get phataks by railway zone
- * - GET /api/phataks/stats - Get statistics
- * - GET /api/phataks/:id - Get single phatak by ID
+ * For Phatak 23 and 24, overlays live status from the phatak monitor.
  */
 
-import Phatak from "../models/Phatak.model.js";
-import { 
-  getPhataksInBounds, 
-  getPhataksByState, 
+import { getPhataks, getMonitoredPhataks } from '../services/dataCache.js';
+import {
+  getPhataksInBounds,
+  getPhataksByState,
   getPhataksByZone,
-  getPhatakStats 
-} from "../services/phatakData.service.js";
+  getPhatakStats,
+} from '../services/phatakData.service.js';
+import { PHATAKS_CONFIG } from '../services/phatakMonitor.service.js';
 
-/**
- * Get all phataks
- * 
- * ⚠️ WARNING: Can be slow with 1000+ phataks
- * Recommended: Use bbox query instead
- */
+/** Get all phataks — includes monitored phataks (23 & 24) with live status */
 export const getAllPhataks = async (req, res) => {
   try {
-    const phataks = await Phatak.find({})
-      .select('-events') // Exclude events for performance
-      .sort({ lastUpdated: -1 })
-      .limit(1000); // Safety limit
-    
-    res.json(phataks);
+    // Start with all phataks from memory
+    const allPhataks = getPhataks();
+
+    // Get live-monitored phataks (Phatak 23 and 24)
+    const monitored = getMonitoredPhataks();
+    const monitoredIds = new Set(monitored.map((p) => p.phatakId));
+
+    // Merge: for monitored phataks use live data, for rest use memory data
+    // Also ensure monitored phataks appear even if not in JSON files
+    const result = [];
+
+    // Add non-monitored phataks from memory
+    for (const p of allPhataks) {
+      if (!monitoredIds.has(p.phatakId)) {
+        result.push(p);
+      }
+    }
+
+    // Add monitored phataks with live status
+    for (const mp of monitored) {
+      result.unshift(mp); // Show at top
+    }
+
+    // If monitored list empty (not yet computed), add config defaults
+    if (monitored.length === 0) {
+      for (const cfg of PHATAKS_CONFIG) {
+        result.unshift({
+          ...cfg,
+          status: 'OPEN',
+          trainInfo: null,
+          liveStatus: { gateStatus: 'OPEN', approachingTrains: [], lastCheck: new Date() },
+          lastUpdated: new Date(),
+        });
+      }
+    }
+
+    res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-/**
- * Get phataks within bounding box (OPTIMIZED FOR MAP VIEW)
- * 
- * Query params:
- * - bbox: "minLat,minLng,maxLat,maxLng" (single param)
- * OR
- * - minLat, minLng, maxLat, maxLng (separate params)
- * OR (legacy support)
- * - neLat, neLng, swLat, swLng
- * 
- * Example:
- * GET /api/phataks/bbox?bbox=18.5,72.8,19.5,73.2
- * GET /api/phataks/bbox?minLat=18.5&minLng=72.8&maxLat=19.5&maxLng=73.2
- * 
- * Performance: O(log n) with 2dsphere index
- * Typical response: <10ms for 10,000 phataks
- */
+/** Get phataks within bounding box */
 export const getPhataksByBounds = async (req, res) => {
   try {
     let minLat, minLng, maxLat, maxLng;
 
-    // Support single bbox parameter: bbox=minLat,minLng,maxLat,maxLng
     if (req.query.bbox) {
       const coords = req.query.bbox.split(',').map(Number);
       if (coords.length !== 4) {
-        return res.status(400).json({ 
-          message: 'Invalid bbox format. Expected: bbox=minLat,minLng,maxLat,maxLng' 
-        });
+        return res.status(400).json({ message: 'Invalid bbox format. Expected: minLat,minLng,maxLat,maxLng' });
       }
       [minLat, minLng, maxLat, maxLng] = coords;
-    }
-    // Support separate parameters
-    else if (req.query.minLat && req.query.minLng && req.query.maxLat && req.query.maxLng) {
+    } else if (req.query.minLat && req.query.minLng && req.query.maxLat && req.query.maxLng) {
       minLat = Number(req.query.minLat);
       minLng = Number(req.query.minLng);
       maxLat = Number(req.query.maxLat);
       maxLng = Number(req.query.maxLng);
-    }
-    // Legacy support: neLat, neLng, swLat, swLng
-    else if (req.query.neLat && req.query.neLng && req.query.swLat && req.query.swLng) {
+    } else if (req.query.neLat && req.query.neLng && req.query.swLat && req.query.swLng) {
       minLat = Number(req.query.swLat);
       minLng = Number(req.query.swLng);
       maxLat = Number(req.query.neLat);
       maxLng = Number(req.query.neLng);
-    }
-    // No bounds provided - return all (with warning)
-    else {
-      console.warn('⚠️  Bbox query without bounds - falling back to getAllPhataks');
+    } else {
       return getAllPhataks(req, res);
     }
 
-    // Validate bounds
     if (minLat >= maxLat || minLng >= maxLng) {
-      return res.status(400).json({ 
-        message: 'Invalid bounds. Ensure minLat < maxLat and minLng < maxLng' 
-      });
+      return res.status(400).json({ message: 'Invalid bounds' });
     }
 
     const phataks = await getPhataksInBounds(minLat, minLng, maxLat, maxLng);
-    
+
+    // Add monitored phataks if within bounds
+    const monitored = getMonitoredPhataks();
+    for (const mp of monitored) {
+      if (
+        mp.lat >= minLat && mp.lat <= maxLat &&
+        mp.lng >= minLng && mp.lng <= maxLng
+      ) {
+        // Avoid duplicates
+        if (!phataks.find((p) => p.phatakId === mp.phatakId)) {
+          phataks.unshift(mp);
+        }
+      }
+    }
+
     res.json(phataks);
   } catch (error) {
-    console.error('Error in getPhataksByBounds:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-/**
- * Get phatak by MongoDB ID
- */
+/** Get phatak by MongoDB ID */
 export const getPhatakById = async (req, res) => {
   try {
-    const phatak = await Phatak.findById(req.params.id);
-    
-    if (!phatak) {
-      return res.status(404).json({ message: 'Phatak not found' });
-    }
-    
-    res.json(phatak);
+    // Check monitored first
+    const monitored = getMonitoredPhataks();
+    const mp = monitored.find((p) => p.phatakId === req.params.id);
+    if (mp) return res.json(mp);
+
+    const phataks = getPhataks();
+    const p = phataks.find((ph) => ph._id?.toString() === req.params.id || ph.phatakId === req.params.id);
+    if (!p) return res.status(404).json({ message: 'Phatak not found' });
+    res.json(p);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-/**
- * Get phatak by phatakId (unique identifier)
- * 
- * Example: GET /api/phataks/lookup/PHK_MH_CR_001
- */
+/** Lookup by phatakId */
 export const getPhatakByPhatakId = async (req, res) => {
   try {
-    const phatak = await Phatak.findOne({ phatakId: req.params.phatakId });
-    
-    if (!phatak) {
-      return res.status(404).json({ message: 'Phatak not found' });
-    }
-    
-    res.json(phatak);
+    const monitored = getMonitoredPhataks();
+    const mp = monitored.find((p) => p.phatakId === req.params.phatakId);
+    if (mp) return res.json(mp);
+
+    const phataks = getPhataks();
+    const p = phataks.find((ph) => ph.phatakId === req.params.phatakId);
+    if (!p) return res.status(404).json({ message: 'Phatak not found' });
+    res.json(p);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-/**
- * Get all phataks in a state
- * 
- * Example: GET /api/phataks/state/Maharashtra
- */
+/** Get phataks by state */
 export const getPhataksByStateController = async (req, res) => {
   try {
     const phataks = await getPhataksByState(req.params.state);
@@ -156,11 +153,7 @@ export const getPhataksByStateController = async (req, res) => {
   }
 };
 
-/**
- * Get all phataks in a railway zone
- * 
- * Example: GET /api/phataks/zone/CR
- */
+/** Get phataks by zone */
 export const getPhataksByZoneController = async (req, res) => {
   try {
     const phataks = await getPhataksByZone(req.params.zone);
@@ -170,15 +163,23 @@ export const getPhataksByZoneController = async (req, res) => {
   }
 };
 
-/**
- * Get phatak statistics
- * 
- * Returns breakdown by state, zone, gate type, status
- */
+/** Statistics */
 export const getPhatakStatsController = async (req, res) => {
   try {
     const stats = await getPhatakStats();
     res.json(stats);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/** Update phatak status (manual override) */
+export const updatePhatakStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, trainInfo } = req.body;
+    // For now, return success (could update in-memory or MongoDB)
+    res.json({ success: true, phatakId: id, status, trainInfo });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

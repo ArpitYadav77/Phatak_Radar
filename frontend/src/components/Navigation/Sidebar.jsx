@@ -47,9 +47,9 @@ export default function Sidebar() {
     >
       {/* Brand */}
       <div style={{
-        padding: '2rem 1.5rem',
+        padding: '1.25rem 1rem',
         borderBottom: `1px solid ${theme.subtle}`,
-        minHeight: '120px',
+        minHeight: '80px',
         display: 'flex',
         alignItems: 'center',
         backgroundColor: theme.brand.indigo + '10'

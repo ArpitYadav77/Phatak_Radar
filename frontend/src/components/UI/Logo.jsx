@@ -9,8 +9,8 @@ export default function Logo({ size = 48, showText = true }) {
       <svg 
         width={size} 
         height={size} 
-        viewBox="0 0 100 100" 
-        style={{ flexShrink: 0 }}
+        viewBox="-2 0 105 100" 
+        style={{ flexShrink: 0, overflow: 'visible' }}
       >
         {/* Background circle for "P" */}
         <circle cx="60" cy="35" r="25" fill="none" stroke="#dc2626" strokeWidth="8"/>

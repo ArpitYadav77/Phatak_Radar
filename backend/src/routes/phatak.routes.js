@@ -6,8 +6,10 @@ import {
   getPhatakByPhatakId,
   getPhataksByStateController,
   getPhataksByZoneController,
-  getPhatakStatsController
+  getPhatakStatsController,
+  updatePhatakStatus
 } from "../controllers/phatak.controller.js";
+import { getFullScheduleWithStatus } from "../services/phatakMonitor.service.js";
 
 const router = express.Router();
 
@@ -16,6 +18,9 @@ const router = express.Router();
  * 
  * Route order matters! Specific routes must come before parameterized routes.
  */
+
+// Full Ludhiana schedule with gate window status (OPEN/WARNING/CLOSED)
+router.get("/schedule", (_req, res) => res.json(getFullScheduleWithStatus()));
 
 // Statistics endpoint
 router.get("/stats", getPhatakStatsController);
@@ -40,5 +45,8 @@ router.get("/", getAllPhataks);
 
 // Get by MongoDB _id (must be last to avoid conflicts)
 router.get("/:id", getPhatakById);
+
+// Update phatak status (manual override or gate logic)
+router.post("/:id/status", updatePhatakStatus);
 
 export default router;

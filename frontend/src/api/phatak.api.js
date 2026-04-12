@@ -61,3 +61,14 @@ export const fetchPhataksByBounds = async (params) => {
     throw error;
   }
 };
+
+/** GET /api/phataks/schedule — full Ludhiana timetable with live window status */
+export const getPhatakSchedule = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/phataks/schedule`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching phatak schedule:', error);
+    return [];
+  }
+};
