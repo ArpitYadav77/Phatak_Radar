@@ -4,7 +4,8 @@ import { initializeServer } from "../src/bootstrap.js";
 
 dotenv.config();
 
-// Vercel serverless function entrypoint.
+// Pre-initialize server-side logic (caching, DB connection) for this serverless instance
+// startSimulationEngine is disabled as it's not suitable for serverless functions
 await initializeServer({ startSimulationEngine: false });
 
 export default app;
