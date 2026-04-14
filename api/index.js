@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-import app from "../src/app.js";
-import { initializeServer } from "../src/bootstrap.js";
+import app from "../backend/src/app.js";
+import { initializeServer } from "../backend/src/bootstrap.js";
 
 dotenv.config();
 
