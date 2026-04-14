@@ -1,9 +1,24 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// Static JSON imports — bundler-safe for Vercel and all serverless platforms.
+// Do NOT switch these to dynamic fs reads; Vercel's nft bundler cannot trace them.
+import gujaratData from '../../data/phataks/gujarat.json' assert { type: 'json' };
+import karnatakaData from '../../data/phataks/karnataka.json' assert { type: 'json' };
+import maharashtraData from '../../data/phataks/maharashtra.json' assert { type: 'json' };
+import punjabData from '../../data/phataks/punjab.json' assert { type: 'json' };
+import rajasthanData from '../../data/phataks/rajasthan.json' assert { type: 'json' };
+import tamilNaduData from '../../data/phataks/tamil_nadu.json' assert { type: 'json' };
+import uttarPradeshData from '../../data/phataks/uttar_pradesh.json' assert { type: 'json' };
+import westBengalData from '../../data/phataks/west_bengal.json' assert { type: 'json' };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const ALL_PHATAK_DATA = [
+  ...gujaratData,
+  ...karnatakaData,
+  ...maharashtraData,
+  ...punjabData,
+  ...rajasthanData,
+  ...tamilNaduData,
+  ...uttarPradeshData,
+  ...westBengalData,
+];
 
 // In-memory store
 let phataks = [];
@@ -15,44 +30,21 @@ let railRadarTrains = [];
 // Processed phataks with live status (Phatak 23 and 24)
 let monitoredPhataks = [];
 
-const IS_VERCEL = process.env.VERCEL || process.env.NODE_ENV === 'production';
-const DATA_DIR = IS_VERCEL
-  ? path.join(process.cwd(), 'backend', 'data', 'phataks')
-  : path.join(__dirname, '../../data/phataks');
-
 export async function initializeMemoryStore() {
-  console.log('🧠 Initializing in-memory data store (Database-less mode)...');
+  console.log('🧠 Initializing in-memory data store from static JSON imports...');
 
   try {
-    // Load Phataks from JSON files
-    if (fs.existsSync(DATA_DIR)) {
-      const files = fs
-        .readdirSync(DATA_DIR)
-        .filter((file) => file.endsWith('.json'));
-      let allPhataks = [];
-
-      for (const file of files) {
-        const filePath = path.join(DATA_DIR, file);
-        const stateData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-
-        stateData.forEach((p) => {
-          allPhataks.push({
-            ...p,
-            location: {
-              type: 'Point',
-              coordinates: [p.lng, p.lat],
-            },
-            status: p.defaultStatus || 'OPEN',
-            lastUpdated: new Date(),
-            events: [],
-          });
-        });
-      }
-      phataks = allPhataks;
-      console.log(`✅ Loaded ${phataks.length} phataks into memory.`);
-    } else {
-      console.warn(`⚠️ Data directory not found: ${DATA_DIR}`);
-    }
+    phataks = ALL_PHATAK_DATA.map((p) => ({
+      ...p,
+      location: {
+        type: 'Point',
+        coordinates: [p.lng, p.lat],
+      },
+      status: p.defaultStatus || 'OPEN',
+      lastUpdated: new Date(),
+      events: [],
+    }));
+    console.log(`✅ Loaded ${phataks.length} phataks into memory.`);
 
     // Load sample trains
     trains = getSampleTrains();

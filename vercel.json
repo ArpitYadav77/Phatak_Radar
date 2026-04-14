@@ -2,8 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "runtime": "vercel-node@latest",
-      "includeFiles": "backend/{src,data}/**"
+      "runtime": "@vercel/node@3"
     }
   },
   "rewrites": [
