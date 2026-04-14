@@ -3,7 +3,7 @@
   "functions": {
     "api/index.js": {
       "runtime": "vercel-node@latest",
-      "includeFiles": "backend/src/**"
+      "includeFiles": "backend/{src,data}/**"
     }
   },
   "rewrites": [
