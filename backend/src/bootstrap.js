@@ -171,10 +171,10 @@ function getPatialaSchedule() {
 }
 
 // ─── Main initialization ───────────────────────────────────────────────────────
-export async function initializeServer({ startSimulationEngine = true } = {}) {
+export async function initializeServer({ startSimulationEngine = true, serverless = false } = {}) {
   if (initialized) return;
 
-  // 1. Load JSON data into memory
+  // 1. Load JSON data into memory (already done in api/index.js for serverless, but idempotent)
   await initializeMemoryStore();
 
   // 2. Try MongoDB
@@ -186,26 +186,26 @@ export async function initializeServer({ startSimulationEngine = true } = {}) {
   // 4. Setup alert handler
   setupAlertHandler(mongoAvailable);
 
-  // 5. Start simulation engine
-  if (startSimulationEngine) {
+  // 5. Start simulation engine (disabled in serverless mode)
+  if (startSimulationEngine && !serverless) {
     startSimulation();
   }
 
-  // 6. First RailRadar poll immediately, then every 30s
-  await pollRailRadar();
-  setInterval(pollRailRadar, 30_000);
+  // 6. RailRadar poll — in serverless mode, fire-and-forget (don't await, don't setInterval)
+  if (serverless) {
+    pollRailRadar().catch(() => {}); // non-blocking, best-effort
+  } else {
+    await pollRailRadar();
+    setInterval(pollRailRadar, 30_000);
+  }
 
   initialized = true;
 
   console.log('='.repeat(50));
   console.log('✅ Phatak Radar backend ready!');
   console.log(`🗄️  MongoDB: ${mongoAvailable ? 'Connected' : 'Offline (memory mode)'}`);
-  console.log('📡 RailRadar: Polling every 30 seconds');
+  console.log(`📡 RailRadar: ${serverless ? 'Single poll (serverless)' : 'Polling every 30 seconds'}`);
   console.log('🚦 Monitoring: Patiala Phatak 23 (Model Town) & 24 (Nabha Road)');
-  console.log('📡 API endpoints:');
-  console.log('   GET /api/health');
-  console.log('   GET /api/phataks');
-  console.log('   GET /api/trains');
-  console.log('   GET /api/alerts');
   console.log('='.repeat(50));
 }
+
