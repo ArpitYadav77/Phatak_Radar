@@ -1,13 +1,16 @@
-// Static JSON imports — bundler-safe for Vercel and all serverless platforms.
-// Do NOT switch these to dynamic fs reads; Vercel's nft bundler cannot trace them.
-import gujaratData from '../../data/phataks/gujarat.json' assert { type: 'json' };
-import karnatakaData from '../../data/phataks/karnataka.json' assert { type: 'json' };
-import maharashtraData from '../../data/phataks/maharashtra.json' assert { type: 'json' };
-import punjabData from '../../data/phataks/punjab.json' assert { type: 'json' };
-import rajasthanData from '../../data/phataks/rajasthan.json' assert { type: 'json' };
-import tamilNaduData from '../../data/phataks/tamil_nadu.json' assert { type: 'json' };
-import uttarPradeshData from '../../data/phataks/uttar_pradesh.json' assert { type: 'json' };
-import westBengalData from '../../data/phataks/west_bengal.json' assert { type: 'json' };
+// Use createRequire for JSON imports — stable and universally supported.
+// Do NOT switch to dynamic fs reads; Vercel's bundler cannot trace them.
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const gujaratData = require('../../data/phataks/gujarat.json');
+const karnatakaData = require('../../data/phataks/karnataka.json');
+const maharashtraData = require('../../data/phataks/maharashtra.json');
+const punjabData = require('../../data/phataks/punjab.json');
+const rajasthanData = require('../../data/phataks/rajasthan.json');
+const tamilNaduData = require('../../data/phataks/tamil_nadu.json');
+const uttarPradeshData = require('../../data/phataks/uttar_pradesh.json');
+const westBengalData = require('../../data/phataks/west_bengal.json');
 
 const ALL_PHATAK_DATA = [
   ...gujaratData,
