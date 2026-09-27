@@ -1,9 +1,12 @@
 import express from 'express';
+import mongoose from 'mongoose';
 
 const router = express.Router();
 
 /** GET /api/alerts — last 24h alerts */
 router.get('/', async (req, res) => {
+  // Without a live connection Mongoose buffers queries for 10 s — don't make the UI wait.
+  if (mongoose.connection.readyState !== 1) return res.json([]);
   try {
     const AlertLog = (await import('../models/AlertLog.model.js')).default;
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
