@@ -1,296 +1,81 @@
-# 🚂 Phatak Radar - Railway Level Crossing Monitor
+# Phatak Radar
 
-A real-time railway level-crossing monitoring system with live train visualization, backend-driven simulation, and comprehensive safety awareness features.
+Is the railway crossing (phatak) open? Phatak Radar answers that in one glance on a phone:
+**OPEN / CLOSING SOON / CLOSED**, which train is crossing or next, a countdown, and how the
+estimate was made.
 
-## 🎯 Features
+> Unofficial estimate. Always obey the gate and railway signals.
 
-### Live Train Visualization
+## What the data is — and isn't
 
-- **Real-time Train Tracking**: Directional arrow markers showing live train positions
-- **Delay-Based Color Coding**:
-  - 🟢 Green - On time
-  - 🔵 Blue - Slight delay (<10 min)
-  - 🟠 Orange - Moderate delay (10-20 min)
-  - 🔴 Red - Heavy delay (>20 min)
-- **Interactive Train Markers**: Click to view details, speed, delay, and affected crossings
-- **Route Visualization**: View train routes on demand when selecting a train
+| Data | Source | Status |
+|---|---|---|
+| Crossing locations (all India) | OpenStreetMap level-crossing nodes, imported by `backend/scripts/importOsm.js` | Real locations; most crossings are unnamed in OSM, so they're labelled by the nearest station |
+| Patiala Phatak 23 / 24 | OSM nodes named "23 / 24 number phatak" | Location verified; road names come from the project owner |
+| Patiala (PTA) timetable, 28 trains incl. both Vande Bharats | Two independent station boards (see `backend/data/timetable/patiala-pta.json`) | Verified 2026-09-28; specials marked unverified |
+| Track geometry Rajpura – Patiala – Nabha | OSM rail ways (`backend/scripts/buildLineGeometry.js`) | Used for crossing distances and train positions |
+| Timetables for other crossings | RailRadar station timetables, derived per crossing | Only with `RAILRADAR_API_KEY`; estimates |
+| Live delays (Patiala) | RailRadar live station board, cached 2 h | Only with `RAILRADAR_API_KEY` |
+| Goods trains (maalgaadi) | **No public source exists** | Shown only via user reports (2+ agreeing within 10 min) |
 
-### Railway Crossing Management
+Crossings on the Patiala line within 8 km of PTA get passing times from the verified timetable.
+Everywhere else shows **NO DATA** until a RailRadar key is configured or people report the gate.
 
-- **Pan-India Phatak Data**: 145+ level crossings across 8 states with realistic coordinates
-- **Real-Time Status Monitoring**: Open, Closed, Unknown states
-- **Train-Phatak Integration**: Automatic closure when trains approach within 2km
-- **ETA Calculations**: Display time until train arrival at each crossing
-- **State-wise & Zone-wise Filtering**: Browse phataks by state or railway zone
-- **Event Tracking**: Complete history of gate operations and train interactions
+## How the status is computed
 
-### Live Updates Feed
+Everything is a pure function of the current IST time (`backend/src/services/gateEngine.js`) —
+no background jobs, so the first request after a cold start is already correct.
 
-- **Combined Event Stream**: Unified view of phatak and train events
-- **Event Types**:
-  - 🚂 Gate Closed
-  - ✅ Gate Opened
-  - ⏱️ Delay Updated
-  - 🚂 Train Approaching
-  - ⚠️ Status Unknown
-- **Time-Stamped Events**: "just now" to relative time display
-- **Category Badges**: Visual distinction between train and crossing events
+1. Passages: when each train passes the crossing (station time ± running time over the distance).
+2. Gate window: closed from ~6 min before to ~3 min after a train; "closing soon" 10 min earlier.
+3. Priority: gatekeeper override (PIN) > 2+ agreeing user reports > timetable (+ live delay).
 
-### Status Overview Panel
-
-- **Phatak Statistics**:
-  - Total crossings in view
-  - Open/Closed/Unknown counts
-  - Visual indicators with icons
-- **Train Statistics**:
-  - Active trains count
-  - On-time vs delayed trains
-  - Affected crossings count
-- **Animated Indicators**: Pulse animation for critical states
-
-### Backend-Driven Simulation
-
-- **5-Second Tick Engine**: All movement and state updates handled server-side
-- **Haversine Distance Calculations**: Accurate geographic computations
-- **Automatic Delay Simulation**: Random delays to simulate real-world scenarios
-- **Train-Phatak Relationship Logic**: Automatic status updates based on proximity
-
-## 🏗️ Architecture
-
-### Tech Stack
-
-**Frontend:**
-
-- React 18
-- Leaflet & React-Leaflet for maps
-- OpenStreetMap tiles (no API key required)
-- Axios for API calls
-- Vite for build tooling
-
-**Backend:**
-
-- Node.js & Express
-- MongoDB with Mongoose
-- Geospatial indexing (2dsphere)
-- Real-time simulation engine
-- RESTful APIs
-
-### Data Flow
-
-```
-Backend Simulation Engine (5s tick)
-    ↓
-Train Position Updates → MongoDB
-    ↓
-Distance Calculations → Phatak Status Updates
-    ↓
-REST APIs ← Frontend Polling (5s)
-    ↓
-UI Updates (Markers, Events, Stats)
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 16+
-- MongoDB 5.0+
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
+## Run locally
 
 ```bash
-git clone <repository-url>
-cd Phatak_radar
+npm install          # installs root, backend and frontend
+npm run dev          # backend :5000 + frontend :3000 (Vite proxies /api)
+cd backend && npm test
 ```
 
-2. **Install Backend Dependencies**
+Refresh the committed data (one-off, never at request time):
 
 ```bash
-cd backend
-npm install
+cd backend && npm run data:osm    # all-India crossings + stations (slow; resumable)
+cd backend && npm run data:line   # Rajpura – Patiala – Nabha track geometry
 ```
 
-3. **Install Frontend Dependencies**
+## Deploy
 
-```bash
-cd frontend
-npm install
-```
+- **Frontend — Vercel**: Root Directory `frontend`, build `npm run build`, output `dist`.
+  Env: `VITE_API_URL=https://<your-render-service>.onrender.com/api`.
+- **Backend — Render** (Web Service): Root Directory `backend`, build `npm install`,
+  start `npm start`, health check `/api/health`.
 
-4. **Configure Environment**
+Backend environment variables (Render):
 
-Backend `.env`:
+| Variable | Needed | Purpose |
+|---|---|---|
+| `RAILRADAR_API_KEY` | optional | Live delays + timetables beyond Patiala (free: 1,000 calls/month) |
+| `RAILRADAR_DAILY_CAP` | optional | Hard daily call cap, default 30 |
+| `MONGO_URI` | recommended | Keeps reports, overrides and the API budget across Render restarts |
+| `GATEKEEPER_PIN` | optional | Enables `POST /api/phataks/:id/status` overrides |
+| `REPORT_SALT` | optional | Salt for hashing reporter IPs |
+| `CORS_ORIGIN` | optional | Extra allowed origin (`*.vercel.app` is always allowed) |
 
-```env
-MONGO_URI=mongodb://localhost:27017/phatak_radar
-PORT=5000
-```
+## API
 
-Frontend `.env`:
+| Method | Path | |
+|---|---|---|
+| GET | `/api/health` | Data freshness, RailRadar status and quota |
+| GET | `/api/phataks?bbox=minLat,minLng,maxLat,maxLng` | Crossings in view with status summary (no bbox → curated) |
+| GET | `/api/phataks/search?q=` | Search by name / nearby station |
+| GET | `/api/phataks/nearest?lat=&lng=` | Closest crossings |
+| GET | `/api/phataks/:id` | Full status: train now/next, countdowns, basis, reports |
+| GET | `/api/phataks/:id/day` | Today's expected closures |
+| POST | `/api/phataks/:id/report` | `{ status: "CLOSED"\|"OPEN", trainType?, note? }` |
+| POST | `/api/phataks/:id/status` | `{ pin, status, minutes? }` gatekeeper override |
+| GET | `/api/trains` | Timetable trains estimated on the Patiala line now |
+| GET | `/api/trains/timetable` | The verified Patiala timetable |
 
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
-For production (Vercel), set `VITE_API_URL` to your deployed backend URL, for example:
-
-```env
-VITE_API_URL=https://your-backend-project.vercel.app/api
-```
-
-If frontend and backend are served from the same origin, `VITE_API_URL` can be omitted and frontend will use `/api`.
-
-### Vercel Backend Notes
-
-- Deploy the `backend/` folder as a separate Vercel project.
-- `backend/vercel.json` routes all requests to the Express handler.
-- Set these backend environment variables in Vercel:
-  - `MONGO_URI` (or `MONGODB_URI`)
-  - `CORS_ORIGIN` (frontend URL, optional comma-separated list)
-
-5. **Start MongoDB**
-
-```bash
-mongod
-```
-
-6. **Start Backend** (with auto-seeding)
-
-```bash
-cd backend
-npm start
-```
-
-The backend will:
-
-- Connect to MongoDB
-- Seed 3 sample trains with routes
-- Start the simulation engine
-- Begin serving APIs on port 5000
-
-7. **Start Frontend**
-
-```bash
-cd frontend
-npm run dev
-```
-
-Visit `http://localhost:3000`
-
-## 📡 API Endpoints
-
-### Trains
-
-- `GET /api/trains` - Get all active trains
-- `GET /api/trains/bounds?neLat&neLng&swLat&swLng` - Get trains in viewport
-- `GET /api/trains/:trainNumber` - Get specific train details
-- `GET /api/trains/:trainNumber/route` - Get train route polyline
-- `GET /api/trains/statistics` - Get train statistics
-
-### Phataks
-
-- `GET /api/phataks` - Get all phataks
-- `GET /api/phataks/:id` - Get specific phatak
-
-## 🎨 Design Philosophy
-
-### Layered Map System
-
-1. **Static Layer** → Railway Crossings (Phataks)
-2. **Dynamic Layer** → Live Trains
-3. **Context Layer** → Train Routes (on-demand)
-4. **UI Overlay** → Legend, Panels, Controls
-
-### Core Principles
-
-- **Backend-Driven Truth**: All simulation logic server-side
-- **Frontend Lightweight**: Pure data consumption and rendering
-- **Explainability**: Clear visual indicators and event descriptions
-- **Safety Awareness**: Prominent warnings for closed crossings
-- **Trust Signals**: Live update timestamps and status indicators
-
-## 🔧 Configuration
-
-### Simulation Parameters
-
-Edit `backend/src/services/trainSimulation.service.js`:
-
-```javascript
-const SIMULATION_TICK_MS = 5000; // Update frequency
-const TRAIN_SPEED_KMH = 60; // Average speed
-const PHATAK_CLOSURE_DISTANCE_KM = 2; // Close when train within 2km
-const PHATAK_OPEN_DISTANCE_KM = 0.5; // Open after train passes 500m
-```
-
-### Sample Train Routes
-
-Modify `seedSampleTrains()` function to add custom routes around your area.
-
-## 📊 Data Models
-
-### Train Schema
-
-```javascript
-{
-  trainNumber: String,
-  trainName: String,
-  currentPosition: { type: "Point", coordinates: [lng, lat] },
-  direction: Number, // 0-360 degrees
-  speed: Number, // km/h
-  delayMinutes: Number,
-  route: { type: "LineString", coordinates: [[lng, lat], ...] },
-  affectedPhataks: [{ phatakId, eta, distance }],
-  lastUpdated: Date,
-  isActive: Boolean
-}
-```
-
-### Phatak Schema
-
-```javascript
-{
-  name: String,
-  phatakId: String,
-  location: { type: "Point", coordinates: [lng, lat] },
-  status: "OPEN" | "CLOSED" | "UNKNOWN",
-  trainInfo: String,
-  trainName: String,
-  eta: Number,
-  reason: String,
-  events: [{ type, description, timestamp }],
-  lastUpdated: Date
-}
-```
-
-## 🎯 Future Enhancements
-
-- [ ] WebSocket support for real-time updates (no polling)
-- [ ] Historical data and analytics
-- [ ] Mobile app (React Native)
-- [ ] User notifications and alerts
-- [ ] Integration with real Indian Railways API
-- [ ] Multi-language support
-- [ ] Advanced route planning
-- [ ] Crowd-sourced status updates
-
-## 📝 License
-
-MIT License - See LICENSE file for details
-
-## 🤝 Contributing
-
-Contributions welcome! Please read CONTRIBUTING.md for guidelines.
-
-## 📞 Support
-
-For issues and questions:
-
-- GitHub Issues: [repository-url]/issues
-- Email: support@phatakradar.com
-
----
-
-**Built with ❤️ for railway safety and awareness**
+Crossing and track data © OpenStreetMap contributors (ODbL). Rail overlay © OpenRailwayMap (CC-BY-SA).
