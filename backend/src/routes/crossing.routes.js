@@ -2,7 +2,7 @@ import express from 'express';
 import {
   getCrossing, crossingsInBbox, nearestCrossings, searchCrossings, curatedCrossings,
 } from '../services/crossings.service.js';
-import { statusFor, summaryFor, publicCrossing, memoized, invalidate } from '../services/status.service.js';
+import { statusFor, summaryFor, publicCrossing, memoized, invalidate, dayFor } from '../services/status.service.js';
 import { submitReport, setOverride } from '../services/reports.service.js';
 import { reportedPhatakIds } from '../services/store.js';
 import { REPORT_TTL_MIN } from '../services/gateEngine.js';
@@ -71,6 +71,18 @@ router.get('/:id', async (req, res) => {
     res.json(await statusFor(c));
   } catch (err) {
     console.error(`❌ GET /api/phataks/${req.params.id}`, err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/** GET /api/phataks/:id/day — today's expected closures (IST) for charts. */
+router.get('/:id/day', async (req, res) => {
+  const c = getCrossing(req.params.id);
+  if (!c) return res.status(404).json({ error: 'Crossing not found' });
+  try {
+    res.json(await memoized(`day:${c.id}`, () => dayFor(c), 60000));
+  } catch (err) {
+    console.error(`❌ GET /api/phataks/${req.params.id}/day`, err);
     res.status(500).json({ error: err.message });
   }
 });

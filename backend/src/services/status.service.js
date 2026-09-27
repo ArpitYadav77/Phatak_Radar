@@ -9,7 +9,8 @@
  *   gateEngine.resolveCrossingStatus()
  */
 
-import { resolveCrossingStatus } from './gateEngine.js';
+import { resolveCrossingStatus, occurrencesAround, GATE_DEFAULTS } from './gateEngine.js';
+import { istMidnight } from '../utils/time.js';
 import { passagesAtKm, timetableInfo, MAX_ANCHOR_KM } from './timetable.service.js';
 import { derivedPassagesFor } from './derivedTimetable.service.js';
 import { stationLive, delaysFromLiveBoard, railRadarStatus } from './railradar.service.js';
@@ -122,6 +123,59 @@ export async function summaryFor(crossing, reportedIds) {
     train: s.train ? { number: s.train.number, name: s.train.name, type: s.train.type } : null,
     closesAt: s.closesAt,
     opensAt: s.opensAt,
+  };
+}
+
+/**
+ * Today's (IST) expected closures at a crossing — for the Insights page.
+ * Uses the same passages as the live status; derived timetables only if already cached.
+ */
+export async function dayFor(crossing) {
+  let passages = null;
+  let info;
+  if (onPatialaTimetable(crossing)) {
+    passages = passagesAtKm(crossing.line.km);
+    info = { available: true, source: 'Verified Patiala (PTA) timetable', verifiedAt: timetableInfo.verifiedAt };
+  } else {
+    const cachedDerived = await kvGet(`derived:${crossing.id}`);
+    passages = cachedDerived?.passages || null;
+    info = cachedDerived?.info || { available: false, reason: 'No timetable for this crossing yet.' };
+  }
+  const start = istMidnight(Date.now());
+  const end = start + 24 * 60 * 60 * 1000;
+  const occ = passages ? occurrencesAround(passages, start + 12 * 60 * 60 * 1000).filter((o) => o.scheduledAt >= start && o.scheduledAt < end) : [];
+  const windows = occ.map((o) => ({
+    number: o.trainNumber,
+    name: o.trainName,
+    type: o.trainType,
+    heading: o.heading,
+    verified: o.verified !== false,
+    at: o.scheduledAt,
+    closeAt: o.scheduledAt - GATE_DEFAULTS.leadMin * 60000,
+    openAt: o.scheduledAt + GATE_DEFAULTS.trailMin * 60000,
+  }));
+  // Total closed minutes with overlapping windows merged.
+  let closedMs = 0;
+  let curStart = null;
+  let curEnd = null;
+  for (const w of [...windows].sort((a, b) => a.closeAt - b.closeAt)) {
+    if (curEnd == null || w.closeAt > curEnd) {
+      if (curEnd != null) closedMs += curEnd - curStart;
+      curStart = w.closeAt;
+      curEnd = w.openAt;
+    } else {
+      curEnd = Math.max(curEnd, w.openAt);
+    }
+  }
+  if (curEnd != null) closedMs += curEnd - curStart;
+
+  return {
+    crossing: publicCrossing(crossing),
+    date: new Date(start + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10),
+    timetable: info,
+    gate: GATE_DEFAULTS,
+    trains: windows,
+    closedMinutes: Math.round(closedMs / 60000),
   };
 }
 

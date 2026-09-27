@@ -1,72 +1,29 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useEffect } from 'react';
-import Sidebar from './components/Navigation/Sidebar';
-import Dashboard from './pages/Dashboard';
-import Trains from './pages/Trains';
-import Analytics from './pages/Analytics';
-import { useTheme } from './contexts/ThemeContext';
-import { RailwayProvider, useRailway } from './context/RailwayContext';
-
-function NotificationRequestor() {
-  const { requestNotificationPermission } = useRailway();
-  useEffect(() => {
-    // Request notification permission after a brief delay
-    const timer = setTimeout(() => requestNotificationPermission(), 2000);
-    return () => clearTimeout(timer);
-  }, [requestNotificationPermission]);
-  return null;
-}
-
-function AppLayout() {
-  const { theme } = useTheme();
-  return (
-    <div style={{
-      display: 'flex',
-      height: '100vh',
-      backgroundColor: theme.app,
-      overflow: 'hidden',
-    }}>
-      <NotificationRequestor />
-      <Sidebar />
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/trains" element={<Trains />} />
-          <Route path="/analytics" element={<Analytics />} />
-        </Routes>
-
-        {/* Personal Signature Footer */}
-        <footer style={{
-          padding: '0.625rem 2rem',
-          borderTop: `1px solid ${theme.subtle}`,
-          backgroundColor: theme.container,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '0.5rem',
-          fontSize: '0.75rem',
-          color: theme.muted,
-          fontWeight: 400,
-          flexShrink: 0,
-        }}>
-          <span style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: theme.accent }} />
-          <span style={{ color: theme.secondary, fontWeight: 500 }}>Phatak Radar</span>
-          <span style={{ color: theme.subtle }}>•</span>
-          <span>Designed &amp; engineered by Arpit</span>
-          <span style={{ color: theme.subtle }}>•</span>
-          <span style={{ color: theme.tertiary, fontSize: '0.6875rem' }}>Engineering safety, thoughtfully</span>
-        </footer>
-      </div>
-    </div>
-  );
-}
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AppShell from './components/layout/AppShell';
+import StatusPage from './pages/StatusPage';
+import MapPage from './pages/MapPage';
+import TrainsPage from './pages/TrainsPage';
+import InsightsPage from './pages/InsightsPage';
+import { AppProvider } from './context/AppContext';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <RailwayProvider>
-        <AppLayout />
-      </RailwayProvider>
+      <AppProvider>
+        <AppShell>
+          <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<StatusPage />} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/trains" element={<TrainsPage />} />
+            <Route path="/insights" element={<InsightsPage />} />
+            <Route path="/analytics" element={<Navigate to="/insights" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+          </ErrorBoundary>
+        </AppShell>
+      </AppProvider>
     </BrowserRouter>
   );
 }
