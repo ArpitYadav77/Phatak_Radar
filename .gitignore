@@ -185,3 +185,5 @@ dump/
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# OSM import checkpoints (scripts/importOsm.js)
+backend/data/osm/.checkpoint-*.json

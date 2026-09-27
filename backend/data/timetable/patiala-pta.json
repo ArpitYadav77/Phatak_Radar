@@ -1,0 +1,54 @@
+{
+  "id": "patiala-pta",
+  "description": "Every train halting at Patiala (PTA) on the Rajpura–Patiala–Dhuri–Bathinda line. Times are station arrival/departure at PTA; crossing times are derived per crossing from distance along the track.",
+  "station": { "code": "PTA", "name": "Patiala", "osmId": 596933637, "lat": 30.34216, "lng": 76.40227 },
+  "sides": {
+    "W": "towards Patiala Cantt · Dhuri · Bathinda",
+    "E": "towards Rajpura · Ambala"
+  },
+  "runsOnConvention": "Weekday numbers 0=Sun … 6=Sat, for the day the train is at PTA (as listed on the station boards).",
+  "sources": [
+    { "name": "trainspnrstatus.com — Patiala (PTA) station board", "url": "https://www.trainspnrstatus.com/station/patiala" },
+    { "name": "prokerala.com — trains from Patiala", "url": "https://www.prokerala.com/travel/indian-railway/trains/from-patiala/" },
+    { "name": "confirmtkt.com — 26461 / 26462 full schedules", "url": "https://www.confirmtkt.com/train-schedule/26462" }
+  ],
+  "verifiedAt": "2026-09-28",
+  "verification": "A train is marked verified only when both station boards list the same number, PTA times and running days. Special (0xxxx) trains run for limited periods, so they are kept but marked unverified. Sides (E/W) follow from each train's origin/destination on this line.",
+  "trains": [
+    { "number": "14887", "name": "Rishikesh – Barmer Express",                "from": "RKSH", "to": "BME",  "arr": "01:40", "dep": "01:42", "runsOn": [0,1,2,3,4,5,6], "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "14888", "name": "Barmer – Rishikesh Express",                "from": "BME",  "to": "RKSH", "arr": "01:59", "dep": "02:07", "runsOn": [0,1,2,3,4,5,6], "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "14626", "name": "Firozpur Cantt – Haridwar Weekly Express",  "from": "FZR",  "to": "HW",   "arr": "03:08", "dep": "03:10", "runsOn": [4],             "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "14525", "name": "Ambala Cantt – Shri Ganganagar Intercity",  "from": "UMB",  "to": "SGNR", "arr": "05:58", "dep": "06:00", "runsOn": [0,1,2,3,4,5,6], "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "14508", "name": "Fazilka – Delhi Intercity Express",         "from": "FKA",  "to": "DLI",  "arr": "07:29", "dep": "07:34", "runsOn": [0,1,2,3,4,5,6], "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "14736", "name": "Ambala Cantt – Shri Ganganagar Express",    "from": "UMB",  "to": "SGNR", "arr": "07:48", "dep": "07:50", "runsOn": [0,1,2,3,4,5,6], "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "54557", "name": "Ambala Cantt – Patiala Passenger",          "from": "UMB",  "to": "PTA",  "arr": "09:00", "dep": null,    "runsOn": [1,2,3,4,5,6],   "fromSide": "E", "toSide": null, "verified": true },
+    { "number": "14815", "name": "Shri Ganganagar – Rishikesh Intercity",     "from": "SGNR", "to": "RKSH", "arr": "09:07", "dep": "09:09", "runsOn": [0,1,2,3,4,5,6], "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "11057", "name": "Mumbai CSMT – Amritsar Express",            "from": "CSMT", "to": "ASR",  "arr": "09:10", "dep": "09:15", "runsOn": [0,1,2,3,4,5,6], "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "19272", "name": "Haridwar – Bhavnagar Express",              "from": "HW",   "to": "BVC",  "arr": "09:53", "dep": "09:58", "runsOn": [3,6],           "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "54552", "name": "Bathinda – Ambala Cantt Passenger",         "from": "BTI",  "to": "UMB",  "arr": "10:32", "dep": "10:34", "runsOn": [0,1,2,3,4,5,6], "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "26462", "name": "Firozpur Cantt – Delhi Vande Bharat",       "from": "FZR",  "to": "DLI",  "arr": "11:05", "dep": "11:07", "runsOn": [0,1,2,4,5,6],   "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "12752", "name": "Jammu Tawi – Nanded Humsafar Express",      "from": "JAT",  "to": "NED",  "arr": "12:55", "dep": "12:57", "runsOn": [0],             "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "54551", "name": "Ambala Cantt – Bathinda Passenger",         "from": "UMB",  "to": "BTI",  "arr": "13:16", "dep": "13:18", "runsOn": [0,1,2,3,4,5,6], "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "12751", "name": "Nanded – Jammu Tawi Humsafar Express",      "from": "NED",  "to": "JAT",  "arr": "14:18", "dep": "14:23", "runsOn": [6],             "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "04519", "name": "Varanasi – Bathinda Special",               "from": "BSB",  "to": "BTI",  "arr": "14:23", "dep": "14:25", "runsOn": [1,5],           "fromSide": "E", "toSide": "W", "verified": false, "note": "Special train — validity period not published on the station boards." },
+    { "number": "11058", "name": "Amritsar – Mumbai CSMT Express",            "from": "ASR",  "to": "CSMT", "arr": "14:33", "dep": "14:38", "runsOn": [0,1,2,3,4,5,6], "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "54558", "name": "Patiala – Ambala Cantt Passenger",          "from": "PTA",  "to": "UMB",  "arr": null,    "dep": "17:15", "runsOn": [1,2,3,4,5,6],   "fromSide": null, "toSide": "E", "verified": true },
+    { "number": "14507", "name": "Delhi – Fazilka Intercity Express",         "from": "DLI",  "to": "FKA",  "arr": "17:51", "dep": "17:53", "runsOn": [0,1,2,3,4,5,6], "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "14735", "name": "Shri Ganganagar – Ambala Cantt Express",    "from": "SGNR", "to": "UMB",  "arr": "17:52", "dep": "17:54", "runsOn": [0,1,2,3,4,5,6], "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "54553", "name": "Ambala Cantt – Dhuri Passenger",            "from": "UMB",  "to": "DUI",  "arr": "18:39", "dep": "18:41", "runsOn": [0,1,2,3,4,5,6], "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "26461", "name": "Delhi – Firozpur Cantt Vande Bharat",       "from": "DLI",  "to": "FZR",  "arr": "19:11", "dep": "19:13", "runsOn": [0,1,2,4,5,6],   "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "14816", "name": "Rishikesh – Shri Ganganagar Intercity",     "from": "RKSH", "to": "SGNR", "arr": "19:23", "dep": "19:25", "runsOn": [0,1,2,3,4,5,6], "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "14625", "name": "Haridwar – Firozpur Cantt Weekly Express",  "from": "HW",   "to": "FZR",  "arr": "19:37", "dep": "19:39", "runsOn": [4],             "fromSide": "E", "toSide": "W", "verified": true },
+    { "number": "14526", "name": "Shri Ganganagar – Ambala Cantt Intercity",  "from": "SGNR", "to": "UMB",  "arr": "19:38", "dep": "19:40", "runsOn": [0,1,2,3,4,5,6], "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "14510", "name": "Bathinda – Ambala Cantt Express",           "from": "BTI",  "to": "UMB",  "arr": "20:53", "dep": "20:55", "runsOn": [0,1,2,3,4,5,6], "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "19271", "name": "Bhavnagar – Haridwar Express",              "from": "BVC",  "to": "HW",   "arr": "22:25", "dep": "22:27", "runsOn": [2,5],           "fromSide": "W", "toSide": "E", "verified": true },
+    { "number": "04520", "name": "Bathinda – Varanasi Special",               "from": "BTI",  "to": "BSB",  "arr": "23:16", "dep": "23:18", "runsOn": [3,6],           "fromSide": "W", "toSide": "E", "verified": false, "note": "Special train — validity period not published on the station boards." }
+  ],
+  "excluded": [
+    { "number": "04683/04684", "reason": "Listed by only one station board (trainspnrstatus); special train." },
+    { "number": "04327/04328", "reason": "Listed by only one station board (prokerala); name and route inconsistent." },
+    { "number": "04559/04560", "reason": "Listed by only one station board (prokerala); name and route inconsistent." },
+    { "number": "04517/04518", "reason": "Listed by only one station board (prokerala); special train." },
+    { "number": "12497/12498, 14033/14034, 12487/12488, 18237/18238, 18101/18102, 14503/14504, 14649/14650, 74901–74906, 54401–54404", "reason": "Previously in the app but not listed at Patiala by any source checked — removed." }
+  ]
+}

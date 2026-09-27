@@ -1,0 +1,34 @@
+{
+  "note": "Hand-checked crossings. Each overrides the OpenStreetMap record with the same osmId. Locations are the OSM nodes named '23 number phatak' / '24 number phatak'; road names come from the project owner (roads are unnamed in OSM).",
+  "verifiedAt": "2026-09-28",
+  "crossings": [
+    {
+      "phatakId": "PTA-PK-23",
+      "osmId": 6007045153,
+      "name": "Patiala Phatak 23",
+      "road": "Model Town",
+      "roadNameSource": "project owner (unverified in OSM)",
+      "osmName": "23 number phatak",
+      "lat": 30.34023,
+      "lng": 76.36658,
+      "district": "Patiala",
+      "state": "Punjab",
+      "railwayZone": "NR",
+      "line": "Rajpura – Patiala – Dhuri"
+    },
+    {
+      "phatakId": "PTA-PK-24",
+      "osmId": 6007045149,
+      "name": "Patiala Phatak 24",
+      "road": "Nabha Road",
+      "roadNameSource": "project owner (unverified in OSM)",
+      "osmName": "24 number phatak",
+      "lat": 30.33996,
+      "lng": 76.35679,
+      "district": "Patiala",
+      "state": "Punjab",
+      "railwayZone": "NR",
+      "line": "Rajpura – Patiala – Dhuri"
+    }
+  ]
+}

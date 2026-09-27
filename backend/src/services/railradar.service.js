@@ -1,151 +1,105 @@
 /**
- * RAILRADAR API SERVICE
+ * RAILRADAR API (https://railradar.in/docs) — server-side only; the key never reaches the browser.
  *
- * Wraps the public RailRadar API (https://api.railradar.org) for server-side use.
- * This avoids CORS issues — backend fetches, frontend polls our Express API.
+ *   Base:  https://api.railradar.in/v1
+ *   Auth:  Authorization: Bearer <RAILRADAR_API_KEY>
+ *   Free:  1,000 requests / month
  *
- * Key endpoints used:
- *  - GET /api/v1/trains/live-map              → all running trains with GPS
- *  - GET /api/v1/trains/{number}?dataType=live → specific train live status
- *  - GET /api/v1/stations/LDH/live            → Ludhiana station board
+ * Budget: a hard daily cap (RAILRADAR_DAILY_CAP, default 30) counted in MongoDB so it is
+ * shared across restarts. Every response is cached (station timetables 7 days, live
+ * boards 2 hours) so repeated page loads cost nothing. Failures are logged loudly and
+ * surfaced to the UI via /api/health and each status's `sources` field.
  */
 
-import { request } from 'undici';
 import { getISTParts } from '../utils/time.js';
+import { kvGet, kvSet, kvIncr } from './store.js';
 
-const RAILRADAR_BASE = 'https://api.railradar.org';
-const TIMEOUT_MS = 10000;
+const BASE = 'https://api.railradar.in/v1';
+const TIMEOUT_MS = 12000;
+const DAILY_CAP = Number(process.env.RAILRADAR_DAILY_CAP) || 30;
 
-// ─── Source status (reported by /api/health) ──────────────────────────────────
-// Call counter is per serverless instance for now; moves to MongoDB in Phase 2.
-const sourceStatus = {
-  state: process.env.RAILRADAR_API_KEY ? 'unknown' : 'disabled',
+const status = {
+  state: process.env.RAILRADAR_API_KEY ? 'idle' : 'disabled',
   lastFetch: null,
   lastError: null,
-  callsDate: null,
-  callsToday: 0,
 };
 
-function recordCall(ok, error = null) {
-  const today = getISTParts().date;
-  if (sourceStatus.callsDate !== today) {
-    sourceStatus.callsDate = today;
-    sourceStatus.callsToday = 0;
-  }
-  sourceStatus.callsToday += 1;
-  sourceStatus.lastFetch = new Date().toISOString();
-  sourceStatus.state = ok ? 'ok' : 'error';
-  sourceStatus.lastError = error;
-  if (!ok) console.error(`❌ [RailRadar] ${error}`);
-}
+const key = () => process.env.RAILRADAR_API_KEY;
+const todayKey = () => `railradar:calls:${getISTParts().date}`;
 
-export function getRailRadarStatus() {
-  const today = getISTParts().date;
+export async function railRadarStatus() {
   return {
-    status: sourceStatus.state,
-    lastFetch: sourceStatus.lastFetch,
-    lastError: sourceStatus.lastError,
-    quotaUsedToday: sourceStatus.callsDate === today ? sourceStatus.callsToday : 0,
+    status: key() ? status.state : 'disabled',
+    lastFetch: status.lastFetch,
+    lastError: status.lastError,
+    quotaUsedToday: (await kvGet(todayKey())) || 0,
+    dailyCap: DAILY_CAP,
   };
 }
 
-/** Fetch all currently running trains with live GPS positions. */
-export async function fetchLiveMap() {
-  if (!process.env.RAILRADAR_API_KEY) {
-    sourceStatus.state = 'disabled';
-    return null;
+async function callBudgeted(pathAndQuery) {
+  if (!key()) return { error: 'disabled' };
+  const used = (await kvGet(todayKey())) || 0;
+  if (used >= DAILY_CAP) {
+    status.state = 'over-budget';
+    console.error(`❌ [RailRadar] daily cap ${DAILY_CAP} reached — skipping ${pathAndQuery}`);
+    return { error: 'over-budget' };
   }
-  try {
-    const { statusCode, body } = await request(
-      `${RAILRADAR_BASE}/api/v1/trains/live-map`,
-      { headersTimeout: TIMEOUT_MS, bodyTimeout: TIMEOUT_MS }
-    );
-    if (statusCode !== 200) {
-      await body.dump();
-      recordCall(false, `live-map returned HTTP ${statusCode}`);
-      return null;
-    }
-    const data = await body.json();
-    recordCall(true);
-    // data is an array of LiveTrainMapData objects
-    return Array.isArray(data) ? data : null;
-  } catch (err) {
-    recordCall(false, `fetchLiveMap failed: ${err.message}`);
-    return null;
-  }
-}
+  await kvIncr(todayKey(), 36 * 60 * 60 * 1000);
 
-/**
- * Fetch live status for a specific train.
- * Returns null if unavailable.
- */
-export async function fetchTrainLive(trainNumber) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
-    const url = `${RAILRADAR_BASE}/api/v1/trains/${trainNumber}?dataType=live`;
-    const { statusCode, body } = await request(url, {
-      headersTimeout: TIMEOUT_MS,
-      bodyTimeout: TIMEOUT_MS,
+    const res = await fetch(`${BASE}${pathAndQuery}`, {
+      headers: { Authorization: `Bearer ${key()}`, Accept: 'application/json' },
+      signal: ctrl.signal,
     });
-    if (statusCode !== 200) return null;
-    const data = await body.json();
-    return data;
+    const text = await res.text();
+    status.lastFetch = new Date().toISOString();
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${text.slice(0, 160)}`);
+    const json = JSON.parse(text);
+    if (json.success === false) throw new Error(`API error ${JSON.stringify(json.error || json).slice(0, 160)}`);
+    status.state = 'ok';
+    status.lastError = null;
+    return { data: json.data };
   } catch (err) {
-    console.warn(`[RailRadar] fetchTrainLive(${trainNumber}) failed:`, err.message);
-    return null;
+    status.state = 'error';
+    status.lastError = `${pathAndQuery}: ${err.name === 'AbortError' ? 'timeout' : err.message}`;
+    console.error(`❌ [RailRadar] ${status.lastError}`);
+    return { error: status.lastError };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
-/**
- * Fetch Ludhiana live station board.
- * Returns list of trains arriving/departing within the next few hours.
- */
-export async function fetchLudhianaBoard(hours = 4) {
-  try {
-    const url = `${RAILRADAR_BASE}/api/v1/stations/LDH/live?hours=${hours}`;
-    const { statusCode, body } = await request(url, {
-      headersTimeout: TIMEOUT_MS,
-      bodyTimeout: TIMEOUT_MS,
-    });
-    if (statusCode !== 200) return null;
-    return await body.json();
-  } catch (err) {
-    console.warn('[RailRadar] fetchLudhianaBoard failed:', err.message);
-    return null;
-  }
+/** Cached wrapper: returns { data, cached } or { error }. */
+async function cached(cacheKey, ttlMs, pathAndQuery) {
+  const hit = await kvGet(cacheKey);
+  if (hit) return { data: hit, cached: true };
+  const r = await callBudgeted(pathAndQuery);
+  if (r.data) await kvSet(cacheKey, r.data, ttlMs);
+  return r;
 }
 
-/**
- * Normalize a LiveTrainMapData entry from RailRadar's /live-map
- * into the internal train shape used by the rest of the app.
- */
-export function normalizeRailRadarTrain(entry) {
-  if (!entry || entry.current_lat == null || entry.current_lng == null) return null;
+/** Static timetable of every train at a station, incl. non-halting ones. Cached 7 days. */
+export function stationTimetable(code) {
+  const c = String(code).toUpperCase();
+  return cached(`rr:station-trains:${c}`, 7 * 24 * 60 * 60 * 1000, `/stations/${encodeURIComponent(c)}/trains?includeIntermediate=true`);
+}
 
-  return {
-    _id: `rr_${entry.train_number}`,
-    trainNumber: String(entry.train_number),
-    trainName: entry.train_name || `Train ${entry.train_number}`,
-    currentPosition: {
-      type: 'Point',
-      coordinates: [parseFloat(entry.current_lng), parseFloat(entry.current_lat)],
-    },
-    // RailRadar gives next station lat/lng — use to determine direction bearing
-    nextStation: entry.next_station_name || entry.next_station || null,
-    nextLat: entry.next_lat ? parseFloat(entry.next_lat) : null,
-    nextLng: entry.next_lng ? parseFloat(entry.next_lng) : null,
-    speed: entry.current_speed_kmph ?? (entry.curr_distance != null ? 60 : 60), // default 60 if unavailable
-    delayMinutes: 0, // will be updated if live detail is fetched
-    status: 'RUNNING',
-    isActive: true,
-    source: 'railradar',
-    schedule: {
-      origin: entry.source_station_name || '',
-      destination: entry.destination_station_name || '',
-      departureTime: null,
-      arrivalTime: null,
-      frequency: 'daily',
-    },
-    affectedPhataks: [],
-    lastUpdated: new Date(),
-  };
+/** Live board (delays) for a station, 8 h ahead. Cached 2 hours. */
+export function stationLive(code) {
+  const c = String(code).toUpperCase();
+  return cached(`rr:station-live:${c}`, 2 * 60 * 60 * 1000, `/stations/${encodeURIComponent(c)}/live?hours=8`);
+}
+
+/** Map<trainNumber, delayMinutes> from a live board response (fields per railradar.in/docs/station-live-board). */
+export function delaysFromLiveBoard(data) {
+  const out = new Map();
+  for (const t of data?.trains || []) {
+    const number = t?.train?.number;
+    const delay = t?.live?.delayMinutes;
+    if (number && Number.isFinite(delay)) out.set(String(number), delay);
+  }
+  return out;
 }

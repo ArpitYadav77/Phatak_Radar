@@ -1,14 +1,17 @@
 import express from "express";
 import cors from "cors";
-import phatakRoutes from "./routes/phatak.routes.js";
+import crossingRoutes from "./routes/crossing.routes.js";
 import trainRoutes from "./routes/train.routes.js";
-import alertRoutes from "./routes/alert.routes.js";
-import { getPhataks, getAllActiveTrains } from "./services/dataCache.js";
-import { getRailRadarStatus } from "./services/railradar.service.js";
-import { PHATAKS_CONFIG } from "./services/phatakMonitor.service.js";
+import { crossingsMeta } from "./services/crossings.service.js";
+import { anchorTimetable } from "./services/timetable.service.js";
+import { railRadarStatus } from "./services/railradar.service.js";
+import { storeBackend } from "./services/store.js";
 import { formatIST } from "./utils/time.js";
 
 const app = express();
+
+// Render / Vercel sit behind a proxy: trust it so req.ip is the client (used for report rate limits).
+app.set("trust proxy", 1);
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -33,29 +36,31 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
 
-app.get("/api/health", (_req, res) => {
-  const railradar = getRailRadarStatus();
-  const phatakIds = new Set(getPhataks().map((p) => p.phatakId));
-  PHATAKS_CONFIG.forEach((p) => phatakIds.add(p.phatakId));
-
+app.get("/api/health", async (_req, res) => {
+  const railradar = await railRadarStatus();
   res.json({
-    ok: phatakIds.size > 0,
+    ok: crossingsMeta.total > 0,
     time_ist: formatIST(),
-    trains: getAllActiveTrains().length,
-    phataks: phatakIds.size,
+    crossings: crossingsMeta.total,
+    curatedCrossings: crossingsMeta.curated,
+    osmDataGeneratedAt: crossingsMeta.osmGeneratedAt,
+    timetableTrains: anchorTimetable().trains.length,
+    store: storeBackend(),
     sources: {
       railradar: railradar.status,
       lastFetch: railradar.lastFetch,
       ...(railradar.lastError && { lastError: railradar.lastError }),
     },
     quotaUsedToday: railradar.quotaUsedToday,
+    dailyCap: railradar.dailyCap,
   });
 });
 
-app.use("/api/phataks", phatakRoutes);
+app.use("/api/phataks", crossingRoutes);
 app.use("/api/trains", trainRoutes);
-app.use("/api/alerts", alertRoutes);
+
+app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
 
 export default app;

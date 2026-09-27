@@ -43,6 +43,35 @@ export function getISTParts(now = new Date()) {
   };
 }
 
+const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Epoch ms of IST midnight for the IST day containing `now`, shifted by `dayOffset` days. */
+export function istMidnight(now = new Date(), dayOffset = 0) {
+  const t = now instanceof Date ? now.getTime() : now;
+  const istDayIndex = Math.floor((t + IST_OFFSET_MS) / DAY_MS);
+  return (istDayIndex + dayOffset) * DAY_MS - IST_OFFSET_MS;
+}
+
+/** IST weekday (0=Sun..6=Sat) of the IST day starting at `midnightMs`. */
+export function istWeekdayOf(midnightMs) {
+  return new Date(midnightMs + IST_OFFSET_MS).getUTCDay();
+}
+
+/** "HH:MM" → minutes after midnight (null for empty). */
+export function hhmmToMin(hhmm) {
+  if (!hhmm) return null;
+  const [h, m] = String(hhmm).split(':').map(Number);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+  return h * 60 + m;
+}
+
+/** Epoch ms → "HH:MM" in IST. */
+export function formatISTClock(ms) {
+  const p = getISTParts(new Date(ms));
+  return `${String(p.hours).padStart(2, '0')}:${String(p.minutes).padStart(2, '0')}`;
+}
+
 /** ISO-like IST timestamp, e.g. "2026-09-27T15:42:10+05:30". */
 export function formatIST(now = new Date()) {
   const p = getISTParts(now);
