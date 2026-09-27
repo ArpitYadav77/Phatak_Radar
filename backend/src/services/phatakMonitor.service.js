@@ -15,6 +15,7 @@
  */
 
 import { EventEmitter } from 'events';
+import { getISTParts } from '../utils/time.js';
 
 // ─── Phatak coordinates ──────────────────────────────────────────────────────
 // Phatak 23 – Model Town Road crossing, Patiala
@@ -81,6 +82,25 @@ export const PATIALA_SCHEDULE = [
   { trainNumber: '18238', trainName: 'Chhatisgarh Express',           scheduledTime: '18:45', direction: 'DOWN', origin: 'Amritsar',            destination: 'Bilaspur' },
   { trainNumber: '18237', trainName: 'Chhatisgarh Express (Return)',  scheduledTime: '09:15', direction: 'UP',   origin: 'Bilaspur',            destination: 'Amritsar' },
 
+  // ── Vande Bharat (verified 2026-09-27) ──────────────────────────────────────
+  // Firozpur Cantt–Delhi Jn Vande Bharat, runs daily except Wednesday.
+  // Patiala (PTA) station times verified; both phataks lie west of PTA (Dhuri
+  // side), so 26462 crosses shortly BEFORE its PTA arrival and 26461 shortly
+  // AFTER its PTA departure. scheduledTime = PTA station time; exact crossing
+  // minute is unverified but falls inside the ±10 min gate window.
+  {
+    trainNumber: '26462', trainName: 'Firozpur Cantt–Delhi Vande Bharat Express', scheduledTime: '11:05', direction: 'UP',
+    origin: 'Firozpur Cantt', destination: 'Delhi Junction', trainType: 'VANDE_BHARAT',
+    runsOn: [0, 1, 2, 4, 5, 6], stationTimes: { PTA: { arr: '11:05', dep: '11:07' } },
+    source: 'confirmtkt.com/train-schedule/26462; en.wikipedia.org (numbers, days)', verifiedAt: '2026-09-27',
+  },
+  {
+    trainNumber: '26461', trainName: 'Delhi–Firozpur Cantt Vande Bharat Express', scheduledTime: '19:13', direction: 'DOWN',
+    origin: 'Delhi Junction', destination: 'Firozpur Cantt', trainType: 'VANDE_BHARAT',
+    runsOn: [0, 1, 2, 4, 5, 6], stationTimes: { PTA: { arr: '19:11', dep: '19:13' } },
+    source: 'confirmtkt.com/train-schedule/26461; railmitra.com; en.wikipedia.org (numbers, days)', verifiedAt: '2026-09-27',
+  },
+
   // ── DMU / Passenger services (Rajpura–Patiala–Dhuri/Bhatinda) ────────────
   { trainNumber: '74901', trainName: 'Rajpura–Bhatinda DMU',          scheduledTime: '06:50', direction: 'DOWN', origin: 'Rajpura',             destination: 'Bhatinda' },
   { trainNumber: '74902', trainName: 'Bhatinda–Rajpura DMU',          scheduledTime: '18:10', direction: 'UP',   origin: 'Bhatinda',            destination: 'Rajpura' },
@@ -127,18 +147,27 @@ function toMinutes(timeStr) {
   return h * 60 + m;
 }
 
-function nowMinutes() {
-  const n = new Date();
-  return n.getHours() * 60 + n.getMinutes() + n.getSeconds() / 60;
+/**
+ * Minutes from now (IST) to the nearest occurrence of a daily HH:MM, within ±12 h,
+ * plus the IST weekday that occurrence falls on (yesterday/today/tomorrow).
+ */
+function nearestOccurrence(scheduledTimeStr) {
+  const { minutesOfDay, weekday } = getISTParts();
+  let diff = toMinutes(scheduledTimeStr) - minutesOfDay;
+  let dayShift = 0;
+  if (diff > 720)  { diff -= 24 * 60; dayShift = -1; }
+  if (diff < -720) { diff += 24 * 60; dayShift = 1; }
+  return { diff, weekday: (weekday + dayShift + 7) % 7 };
 }
 
 function minutesUntilCrossing(scheduledTimeStr) {
-  const scheduled = toMinutes(scheduledTimeStr);
-  const now = nowMinutes();
-  let diff = scheduled - now;
-  if (diff > 720)  diff -= 24 * 60;
-  if (diff < -720) diff += 24 * 60;
-  return diff;
+  return nearestOccurrence(scheduledTimeStr).diff;
+}
+
+/** False when the entry has runsOn days and its nearest occurrence isn't one of them. */
+function runsOnNearestOccurrence(entry) {
+  if (!entry.runsOn) return true;
+  return entry.runsOn.includes(nearestOccurrence(entry.scheduledTime).weekday);
 }
 
 export function getDistanceKm(lat1, lon1, lat2, lon2) {
@@ -170,7 +199,7 @@ function isMovingToward(trainId, phatakId, currentDistKm) {
 
 // ─── Schedule-based gate status ───────────────────────────────────────────────
 function getScheduleBasedStatus() {
-  const candidates = PATIALA_SCHEDULE.map((entry) => ({
+  const candidates = PATIALA_SCHEDULE.filter(runsOnNearestOccurrence).map((entry) => ({
     ...entry,
     minutesUntil: minutesUntilCrossing(entry.scheduledTime),
   }));
@@ -340,7 +369,7 @@ export function computePhatakStatus(trains) {
 
 /** Full Patiala schedule with live window status per train */
 export function getFullScheduleWithStatus() {
-  return PATIALA_SCHEDULE.map((entry) => {
+  return PATIALA_SCHEDULE.filter(runsOnNearestOccurrence).map((entry) => {
     const minutesUntil = minutesUntilCrossing(entry.scheduledTime);
     let windowStatus = 'UPCOMING';
     if (minutesUntil >= -GATE_OPEN_AFTER_MIN && minutesUntil <= GATE_CLOSE_BEFORE_MIN) windowStatus = 'GATE CLOSED';

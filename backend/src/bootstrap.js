@@ -167,6 +167,9 @@ function getPatialaSchedule() {
     { trainNumber: '74904', trainName: 'Rajpura–Patiala Passenger',scheduledTime: '17:00', direction: 'DOWN', closureDuration: 10 },
     { trainNumber: '18101', trainName: 'Tata–Patiala Express',     scheduledTime: '11:30', direction: 'DOWN', closureDuration: 10 },
     { trainNumber: '18102', trainName: 'Patiala–Tata Express',     scheduledTime: '15:20', direction: 'UP',   closureDuration: 10 },
+    // Vande Bharat — verified 2026-09-27, not on Wednesdays (see phatakMonitor.service.js)
+    { trainNumber: '26462', trainName: 'Firozpur Cantt–Delhi Vande Bharat Express', scheduledTime: '11:05', direction: 'UP',   closureDuration: 10 },
+    { trainNumber: '26461', trainName: 'Delhi–Firozpur Cantt Vande Bharat Express', scheduledTime: '19:13', direction: 'DOWN', closureDuration: 10 },
   ];
 }
 

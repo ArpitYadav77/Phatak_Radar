@@ -256,7 +256,7 @@ function TrainRow({ train, highlight, dim }) {
             {cfg.icon} {cfg.label}
           </span>
           <span style={{ fontSize: '0.65rem', color: '#64748b' }}>
-            {direction === 'UP' ? '↑ UP (→ Amritsar)' : '↓ DOWN (→ Delhi)'}
+            {direction === 'UP' ? '↑ UP (→ Rajpura/Delhi)' : '↓ DOWN (→ Dhuri/Bathinda)'}
           </span>
         </div>
         <div style={{ fontSize: '0.8rem', fontWeight: 600, color: dim ? '#64748b' : '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

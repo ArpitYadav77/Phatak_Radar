@@ -13,10 +13,16 @@ const IST_PARTS = new Intl.DateTimeFormat('en-GB', {
   hour: '2-digit',
   minute: '2-digit',
   second: '2-digit',
+  weekday: 'short',
   hourCycle: 'h23',
 });
 
-/** Returns { year, month, day, hours, minutes, seconds, date: 'YYYY-MM-DD', minutesOfDay } in IST. */
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+/**
+ * Returns { year, month, day, hours, minutes, seconds, weekday (0=Sun..6=Sat),
+ * date: 'YYYY-MM-DD', minutesOfDay } in IST.
+ */
 export function getISTParts(now = new Date()) {
   const parts = Object.fromEntries(
     IST_PARTS.formatToParts(now).map((p) => [p.type, p.value])
@@ -31,6 +37,7 @@ export function getISTParts(now = new Date()) {
     hours,
     minutes,
     seconds,
+    weekday: WEEKDAYS.indexOf(parts.weekday),
     date: `${parts.year}-${parts.month}-${parts.day}`,
     minutesOfDay: hours * 60 + minutes + seconds / 60,
   };

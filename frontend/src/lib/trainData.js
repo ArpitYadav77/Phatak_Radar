@@ -48,6 +48,9 @@ export const PATIALA_TRAINS = [
   { trainNumber: '12488', trainName: 'Amritsar–Sealdah Express',      origin: 'Amritsar',            destination: 'Sealdah',    scheduledTime: '20:30', direction: 'UP' },
   { trainNumber: '18238', trainName: 'Chhatisgarh Express',           origin: 'Amritsar',            destination: 'Bilaspur',   scheduledTime: '18:45', direction: 'DOWN' },
   { trainNumber: '18237', trainName: 'Chhatisgarh Express (Return)',  origin: 'Bilaspur',            destination: 'Amritsar',   scheduledTime: '09:15', direction: 'UP' },
+  // Vande Bharat — verified 2026-09-27, runs daily except Wednesday (runsOn: 0=Sun..6=Sat)
+  { trainNumber: '26462', trainName: 'Firozpur Cantt–Delhi Vande Bharat Express', origin: 'Firozpur Cantt', destination: 'Delhi Junction', scheduledTime: '11:05', direction: 'UP',   trainType: 'VANDE_BHARAT', runsOn: [0, 1, 2, 4, 5, 6] },
+  { trainNumber: '26461', trainName: 'Delhi–Firozpur Cantt Vande Bharat Express', origin: 'Delhi Junction', destination: 'Firozpur Cantt', scheduledTime: '19:13', direction: 'DOWN', trainType: 'VANDE_BHARAT', runsOn: [0, 1, 2, 4, 5, 6] },
   { trainNumber: '74901', trainName: 'Rajpura–Bhatinda DMU',          origin: 'Rajpura',             destination: 'Bhatinda',   scheduledTime: '06:50', direction: 'DOWN' },
   { trainNumber: '74902', trainName: 'Bhatinda–Rajpura DMU',          origin: 'Bhatinda',            destination: 'Rajpura',    scheduledTime: '18:10', direction: 'UP' },
   { trainNumber: '74903', trainName: 'Patiala–Rajpura Passenger',     origin: 'Patiala',             destination: 'Rajpura',    scheduledTime: '07:45', direction: 'UP' },
