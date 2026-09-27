@@ -46,11 +46,11 @@ function AppLayout() {
           gap: '0.5rem',
           fontSize: '0.75rem',
           color: theme.muted,
-          fontWeight: 500,
+          fontWeight: 400,
           flexShrink: 0,
         }}>
-          <span style={{ color: theme.accent }}>🚉</span>
-          <span>Phatak Radar</span>
+          <span style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: theme.accent }} />
+          <span style={{ color: theme.secondary, fontWeight: 500 }}>Phatak Radar</span>
           <span style={{ color: theme.subtle }}>•</span>
           <span>Designed &amp; engineered by Arpit</span>
           <span style={{ color: theme.subtle }}>•</span>

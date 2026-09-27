@@ -5,6 +5,7 @@ import TrainMarker from './TrainMarker';
 import TrainRoute from './TrainRoute';
 import { useState, useEffect } from 'react';
 import { PHATAK_23, PHATAK_24, APPROACH_RADIUS_KM, CRITICAL_RADIUS_KM } from '../../lib/trainData';
+import { P, FONT } from '../../styles/palette';
 
 // ─── Patiala city center (Rajpura–Patiala–Dhuri line) ───────────────────────
 const PATIALA = [30.3398, 76.3869];
@@ -12,10 +13,10 @@ const PATIALA = [30.3398, 76.3869];
 // ─── Phatak icon factory ──────────────────────────────────────────────────────
 function createPhatakIcon(gateStatus, isSelected) {
   const colorMap = {
-    OPEN: '#10b981',
-    WARNING: '#f59e0b',
-    CLOSED: '#ef4444',
-    UNKNOWN: '#64748b',
+    OPEN: P.success,
+    WARNING: P.warning,
+    CLOSED: P.danger,
+    UNKNOWN: P.muted,
   };
   const color = colorMap[gateStatus] || colorMap.UNKNOWN;
   const pulse = gateStatus === 'CLOSED' || isSelected;
@@ -24,15 +25,15 @@ function createPhatakIcon(gateStatus, isSelected) {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 48" width="32" height="48">
       <defs>
         <filter id="sh">
-          <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.4"/>
+          <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-opacity="0.5"/>
         </filter>
       </defs>
       <path d="M16 0C9.4 0 4 5.4 4 12c0 9 12 24 12 24s12-15 12-24c0-6.6-5.4-12-12-12z"
-            fill="${color}" stroke="#0f172a" stroke-width="1.5" filter="url(#sh)"/>
-      <circle cx="16" cy="12" r="5" fill="#0f172a" opacity="0.25"/>
-      <circle cx="16" cy="12" r="3.5" fill="#fff"/>
+            fill="${color}" stroke="${isSelected ? P.gold : P.bg}" stroke-width="${isSelected ? 2 : 1.5}" filter="url(#sh)"/>
+      <circle cx="16" cy="12" r="4.5" fill="${P.bg}" opacity="0.35"/>
+      <circle cx="16" cy="12" r="3" fill="${P.text}"/>
       ${pulse ? `
-        <circle cx="16" cy="12" r="9" fill="none" stroke="${color}" stroke-width="2.5" opacity="0.7">
+        <circle cx="16" cy="12" r="9" fill="none" stroke="${isSelected && gateStatus !== 'CLOSED' ? P.gold : color}" stroke-width="2" opacity="0.7">
           <animate attributeName="r" values="9;14;9" dur="1.6s" repeatCount="indefinite"/>
           <animate attributeName="opacity" values="0.7;0.1;0.7" dur="1.6s" repeatCount="indefinite"/>
         </circle>
@@ -83,9 +84,11 @@ export default function MapView({ phataks, trains, onPhatakClick, onTrainClick, 
       style={{ width: '100%', height: '100%' }}
       zoomControl={true}
     >
+      {/* OSM tiles dimmed/desaturated via .map-tiles-dark (global.css) so status markers carry the color */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        className="map-tiles-dark"
       />
 
       {/* ── Approach radius circles around Phatak 23 and 24 ── */}
@@ -98,13 +101,13 @@ export default function MapView({ phataks, trains, onPhatakClick, onTrainClick, 
             <Circle
               center={[phatak.lat, phatak.lng]}
               radius={APPROACH_RADIUS_KM * 1000}
-              pathOptions={{ color: '#f59e0b', fillColor: '#f59e0b', fillOpacity: 0.03, weight: 1, dashArray: '6,6' }}
+              pathOptions={{ color: P.warning, fillColor: P.warning, fillOpacity: 0.025, weight: 1, opacity: 0.55, dashArray: '6,6' }}
             />
             {/* 5 km critical radius */}
             <Circle
               center={[phatak.lat, phatak.lng]}
               radius={CRITICAL_RADIUS_KM * 1000}
-              pathOptions={{ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.06, weight: 1.5 }}
+              pathOptions={{ color: P.danger, fillColor: P.danger, fillOpacity: 0.06, weight: 1, opacity: 0.7 }}
             />
           </g>
         );
@@ -126,7 +129,7 @@ export default function MapView({ phataks, trains, onPhatakClick, onTrainClick, 
               key={`line-${train.trainNumber}`}
               trainPos={[lat, lng]}
               phatakPos={[nearestPhatak.lat, nearestPhatak.lng]}
-              color={train.approachStatus === 'CRITICAL' ? '#ef4444' : '#f59e0b'}
+              color={train.approachStatus === 'CRITICAL' ? P.danger : P.warning}
             />
           );
         })}
@@ -146,29 +149,31 @@ export default function MapView({ phataks, trains, onPhatakClick, onTrainClick, 
             eventHandlers={{ click: () => onPhatakClick && onPhatakClick(phatak) }}
           >
             <Popup minWidth={240}>
-              <div style={{ fontFamily: 'system-ui, sans-serif' }}>
-                <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.5rem' }}>
+              <div style={{ fontFamily: FONT, color: P.text }}>
+                <div style={{ fontWeight: 600, fontSize: '0.9375rem', marginBottom: '0.5rem' }}>
                   {phatak.name}
                 </div>
                 <div style={{
                   display: 'inline-block',
-                  padding: '0.2rem 0.6rem',
+                  padding: '0.1875rem 0.5rem',
                   borderRadius: '4px',
-                  backgroundColor: gateStatus === 'CLOSED' ? '#ef4444' : gateStatus === 'WARNING' ? '#f59e0b' : '#10b981',
-                  color: '#fff',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
+                  backgroundColor: gateStatus === 'CLOSED' ? P.dangerBg : gateStatus === 'WARNING' ? P.warningBg : P.successBg,
+                  border: `1px solid ${gateStatus === 'CLOSED' ? P.dangerBorder : gateStatus === 'WARNING' ? P.warningBorder : P.successBorder}`,
+                  color: gateStatus === 'CLOSED' ? P.dangerText : gateStatus === 'WARNING' ? P.warning : P.successText,
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.04em',
                   marginBottom: '0.5rem',
                 }}>
-                  {gateStatus === 'CLOSED' ? '🔴 GATE CLOSED — TRAIN IN WINDOW' : gateStatus === 'WARNING' ? '⚠️ PREPARE TO CLOSE' : '🟢 GATE OPEN'}
+                  {gateStatus === 'CLOSED' ? 'GATE CLOSED — TRAIN IN WINDOW' : gateStatus === 'WARNING' ? 'PREPARE TO CLOSE' : 'GATE OPEN'}
                 </div>
 
                 {/* Schedule-based info */}
                 {phatak.liveStatus?.scheduledTrain && (
-                  <div style={{ fontSize: '0.8rem', color: '#374151', marginTop: '0.25rem' }}>
-                    🚂 <strong>{phatak.liveStatus.scheduledTrain.trainName}</strong> ({phatak.liveStatus.scheduledTrain.trainNumber})
+                  <div style={{ fontSize: '0.8rem', color: P.text, marginTop: '0.25rem' }}>
+                    <strong style={{ fontWeight: 500 }}>{phatak.liveStatus.scheduledTrain.trainName}</strong> <span style={{ color: P.infoText }}>({phatak.liveStatus.scheduledTrain.trainNumber})</span>
                     <br/>
-                    <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                    <span style={{ fontSize: '0.75rem', color: P.text2 }}>
                       Scheduled: {phatak.liveStatus.scheduledTrain.scheduledTime}
                       {phatak.liveStatus.minutesToCrossing != null && (
                         <> · {Math.abs(Math.round(phatak.liveStatus.minutesToCrossing))} min {phatak.liveStatus.minutesToCrossing > 0 ? 'to crossing' : 'ago'}</>
@@ -179,18 +184,18 @@ export default function MapView({ phataks, trains, onPhatakClick, onTrainClick, 
 
                 {/* GPS-tracked trains */}
                 {approachingTrains.filter(t => t.source === 'gps').length > 0 && (
-                  <div style={{ marginTop: '0.5rem', borderTop: '1px solid #e5e7eb', paddingTop: '0.5rem' }}>
-                    <div style={{ fontSize: '0.7rem', color: '#6b7280', marginBottom: '0.25rem' }}>📡 GPS TRACKED</div>
+                  <div style={{ marginTop: '0.5rem', borderTop: `1px solid ${P.border}`, paddingTop: '0.5rem' }}>
+                    <div style={{ fontSize: '0.625rem', color: P.muted, letterSpacing: '0.08em', marginBottom: '0.25rem' }}>GPS TRACKED</div>
                     {approachingTrains.filter(t => t.source === 'gps').slice(0, 3).map((t, i) => (
                       <div key={i} style={{ fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
                         <span>{t.trainName} ({t.trainNumber})</span>
-                        <span style={{ color: '#ef4444' }}>{t.distanceKm} km · {t.eta} min</span>
+                        <span style={{ color: t.distanceKm <= CRITICAL_RADIUS_KM ? P.dangerText : P.warning }}>{t.distanceKm} km · {t.eta} min</span>
                       </div>
                     ))}
                   </div>
                 )}
 
-                <div style={{ fontSize: '0.65rem', color: '#9ca3af', marginTop: '0.5rem' }}>
+                <div style={{ fontSize: '0.65rem', color: P.muted, marginTop: '0.5rem' }}>
                   {phatak.lat?.toFixed(4)}°N, {phatak.lng?.toFixed(4)}°E · Gate logic: ±10 min schedule
                 </div>
               </div>
@@ -215,22 +220,24 @@ export default function MapView({ phataks, trains, onPhatakClick, onTrainClick, 
             eventHandlers={{ click: () => onPhatakClick && onPhatakClick(phatak) }}
           >
             <Popup>
-              <div style={{ minWidth: '180px' }}>
-                <strong>{phatak.name}</strong>
+              <div style={{ minWidth: '180px', fontFamily: FONT, color: P.text }}>
+                <strong style={{ fontWeight: 600 }}>{phatak.name}</strong>
                 <div style={{
                   marginTop: '0.4rem',
-                  padding: '0.2rem 0.5rem',
-                  backgroundColor: status === 'CLOSED' ? '#ef4444' : '#10b981',
-                  color: '#fff',
+                  padding: '0.125rem 0.5rem',
+                  backgroundColor: status === 'CLOSED' ? P.dangerBg : P.successBg,
+                  border: `1px solid ${status === 'CLOSED' ? P.dangerBorder : P.successBorder}`,
+                  color: status === 'CLOSED' ? P.dangerText : P.successText,
                   borderRadius: '4px',
-                  fontSize: '0.7rem',
-                  fontWeight: 700,
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.04em',
                   display: 'inline-block',
                 }}>
                   {status}
                 </div>
                 {phatak.trainInfo && (
-                  <div style={{ marginTop: '0.4rem', fontSize: '0.8rem' }}>🚂 {phatak.trainInfo}</div>
+                  <div style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: P.text2 }}>{phatak.trainInfo}</div>
                 )}
               </div>
             </Popup>

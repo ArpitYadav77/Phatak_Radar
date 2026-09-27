@@ -1,4 +1,5 @@
 import { Polyline } from 'react-leaflet';
+import { P } from '../../styles/palette';
 
 export default function TrainRoute({ route, trainNumber }) {
   if (!route?.coordinates || route.coordinates.length < 2) {
@@ -12,7 +13,7 @@ export default function TrainRoute({ route, trainNumber }) {
     <Polyline
       positions={positions}
       pathOptions={{
-        color: '#60a5fa',
+        color: P.info,
         weight: 3,
         opacity: 0.6,
         dashArray: '10, 10',

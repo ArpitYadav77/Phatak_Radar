@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import Logo from '../UI/Logo';
+import Icon from '../UI/Icon';
+import { P } from '../../styles/palette';
 import { useTheme } from '../../contexts/ThemeContext';
 
 export default function Sidebar() {
@@ -10,19 +12,19 @@ export default function Sidebar() {
   const navItems = [
     {
       path: '/',
-      icon: '📊',
+      icon: 'dashboard',
       label: 'Dashboard',
       description: 'System Overview'
     },
     {
       path: '/trains',
-      icon: '🚂',
+      icon: 'train',
       label: 'Trains',
       description: 'Schedule & Status'
     },
     {
       path: '/analytics',
-      icon: '📈',
+      icon: 'chart',
       label: 'Analytics',
       description: 'Reports & Insights'
     }
@@ -32,7 +34,7 @@ export default function Sidebar() {
     <aside 
       style={{
         width: isExpanded ? '280px' : '80px',
-        backgroundColor: theme.container,
+        backgroundColor: P.sidebar,
         borderRight: `1px solid ${theme.subtle}`,
         display: 'flex',
         flexDirection: 'column',
@@ -52,7 +54,7 @@ export default function Sidebar() {
         minHeight: '80px',
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: theme.brand.indigo + '10'
+        backgroundColor: P.sidebar
       }}>
         <div style={{
           display: 'flex',
@@ -74,9 +76,10 @@ export default function Sidebar() {
               <p style={{
                 margin: '0.5rem 0 0 0',
                 fontSize: '0.6875rem',
-                color: '#14b8a6',
-                fontWeight: '600',
-                letterSpacing: '0.025em'
+                color: P.muted,
+                fontWeight: '500',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase'
               }}>
                 Railway Crossing Monitor
               </p>
@@ -106,41 +109,37 @@ export default function Sidebar() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1rem',
-                padding: '0.875rem 1rem',
-                borderRadius: '8px',
+                padding: '0.75rem 0.875rem',
+                borderRadius: '6px',
                 textDecoration: 'none',
-                transition: 'all 0.2s',
-                backgroundColor: isActive ? '#14b8a620' : 'transparent',
-                borderLeft: isActive ? '3px solid #14b8a6' : '3px solid transparent',
-                border: isActive ? '1px solid #14b8a630' : '1px solid transparent',
+                transition: 'background-color 0.2s, border-color 0.2s',
+                backgroundColor: isActive ? P.goldBg : 'transparent',
+                border: `1px solid ${isActive ? P.goldBorder : 'transparent'}`,
+                boxShadow: isActive ? `inset 2px 0 0 ${P.gold}` : 'none',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap'
               })}
               onMouseEnter={(e) => {
                 const isActive = e.currentTarget.getAttribute('aria-current') === 'page';
                 if (!isActive) {
-                  e.currentTarget.style.backgroundColor = '#334155';
-                  e.currentTarget.style.borderLeftColor = '#14b8a650';
+                  e.currentTarget.style.backgroundColor = P.cardHover;
                 }
               }}
               onMouseLeave={(e) => {
                 const isActive = e.currentTarget.getAttribute('aria-current') === 'page';
                 if (!isActive) {
                   e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.borderLeftColor = 'transparent';
                 }
               }}
             >
               {({ isActive }) => (
                 <>
                   <div style={{
-                    fontSize: '1.5rem',
-                    lineHeight: 1,
-                    opacity: isActive ? 1 : 0.7,
                     minWidth: '32px',
-                    textAlign: 'center'
+                    display: 'flex',
+                    justifyContent: 'center'
                   }}>
-                    {item.icon}
+                    <Icon name={item.icon} size={20} color={isActive ? P.gold : P.text2} />
                   </div>
                   <div style={{ 
                     flex: 1,
@@ -148,16 +147,16 @@ export default function Sidebar() {
                     transition: 'opacity 0.3s ease'
                   }}>
                     <div style={{
-                      fontSize: '0.9375rem',
-                      fontWeight: '600',
-                      color: isActive ? '#ffffff' : '#e2e8f0',
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      color: isActive ? P.text : P.text2,
                       marginBottom: '0.125rem'
                     }}>
                       {item.label}
                     </div>
                     <div style={{
                       fontSize: '0.75rem',
-                      color: isActive ? '#bfdbfe' : '#64748b'
+                      color: P.muted
                     }}>
                       {item.description}
                     </div>
@@ -179,16 +178,16 @@ export default function Sidebar() {
           alignItems: 'center',
           gap: '0.75rem',
           padding: '0.875rem',
-          backgroundColor: '#0f172a',
-          borderRadius: '8px',
-          border: '1px solid #334155'
+          backgroundColor: P.bg,
+          borderRadius: '6px',
+          border: `1px solid ${P.border}`
         }}>
           <div style={{
             width: '8px',
             height: '8px',
-            backgroundColor: '#34d399',
+            backgroundColor: P.success,
             borderRadius: '50%',
-            boxShadow: '0 0 0 3px rgba(52, 211, 153, 0.2)',
+            boxShadow: `0 0 0 3px ${P.successBg}`,
             animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             minWidth: '8px'
           }}></div>
@@ -199,14 +198,14 @@ export default function Sidebar() {
           }}>
             <div style={{
               fontSize: '0.8125rem',
-              fontWeight: '600',
-              color: '#f1f5f9'
+              fontWeight: '500',
+              color: P.text
             }}>
               System Online
             </div>
             <div style={{
               fontSize: '0.75rem',
-              color: '#64748b',
+              color: P.muted,
               marginTop: '0.125rem'
             }}>
               Updated just now

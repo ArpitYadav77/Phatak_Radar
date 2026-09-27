@@ -5,13 +5,12 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #0f172a;
-  color: #f8fafc;
+  background-color: #0B111A;
+  color: #E8EDF3;
 }
 
 #root {
@@ -21,8 +20,16 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+button, input, select {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 1px solid #C8A96B;
+  outline-offset: 2px;
 }
 
 ::-webkit-scrollbar {
@@ -31,15 +38,91 @@ code {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e293b;
-  border-radius: 4px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: #263448;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #33445C;
+}
+
+/* ── Leaflet: dark control-room chrome ─────────────────────────────────────── */
+
+.leaflet-container {
+  background: #0B111A;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Night-mode basemap: invert light OSM tiles, rotate hues back, then dim and
+   desaturate. Applied to the tile layer only — markers and zones keep true color. */
+.map-tiles-dark {
+  filter: invert(1) hue-rotate(180deg) brightness(0.78) contrast(0.88) saturate(0.28);
+}
+
+.leaflet-bar {
+  border: 1px solid #263448 !important;
+  box-shadow: none !important;
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover {
+  background-color: #151F2E;
+  color: #8D9AAF;
+  border-bottom-color: #263448;
+}
+
+.leaflet-bar a:hover {
+  background-color: #1B2738;
+  color: #E8EDF3;
+}
+
+.leaflet-control-attribution {
+  background: rgba(11, 17, 26, 0.8) !important;
+  color: #647286;
+  font-size: 10px;
+}
+
+.leaflet-control-attribution a {
+  color: #8D9AAF;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #151F2E;
+  color: #E8EDF3;
+  border: 1px solid #263448;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: #647286;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: #E8EDF3;
+}
+
+.leaflet-tooltip {
+  background: #151F2E;
+  color: #E8EDF3;
+  border: 1px solid #263448;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: #263448;
+}
+
+.train-marker {
+  background: none;
+  border: none;
 }

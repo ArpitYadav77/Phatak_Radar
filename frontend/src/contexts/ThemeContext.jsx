@@ -1,56 +1,58 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { P } from '../styles/palette';
 
 const ThemeContext = createContext();
 
 export const themes = {
+  // Control-room palette — keep in sync with styles/palette.js
   dark: {
     // Backgrounds
-    app: '#0a0f1e',
-    container: '#1a2332',
-    card: '#1e293b',
-    cardHover: '#273548',
-    elevated: '#334155',
-    
+    app: P.bg,
+    container: P.sidebar,
+    card: P.card,
+    cardHover: P.cardHover,
+    elevated: P.cardHover,
+
     // Text
-    primary: '#f1f5f9',
-    secondary: '#cbd5e1',
-    tertiary: '#94a3b8',
-    muted: '#64748b',
-    
+    primary: P.text,
+    secondary: P.text2,
+    tertiary: P.text2,
+    muted: P.muted,
+
     // Borders
-    subtle: '#334155',
-    medium: '#475569',
-    strong: '#64748b',
-    
+    subtle: P.border,
+    medium: P.border,
+    strong: P.muted,
+
     // Accent
-    accent: '#14b8a6',
-    accentBg: '#14b8a620',
-    
+    accent: P.gold,
+    accentBg: P.goldBg,
+
     // Status
-    safe: '#10b981',
-    safeBg: '#10b98120',
-    safeText: '#6ee7b7',
-    alert: '#ef4444',
-    alertBg: '#ef444420',
-    alertText: '#fca5a5',
-    warning: '#f59e0b',
-    warningBg: '#f59e0b20',
-    warningText: '#fbbf24',
-    unknown: '#64748b',
-    unknownBg: '#64748b20',
-    unknownText: '#94a3b8',
-    
+    safe: P.success,
+    safeBg: P.successBg,
+    safeText: P.successText,
+    alert: P.danger,
+    alertBg: P.dangerBg,
+    alertText: P.dangerText,
+    warning: P.warning,
+    warningBg: P.warningBg,
+    warningText: P.warning,
+    unknown: P.muted,
+    unknownBg: 'rgba(100, 114, 134, 0.14)',
+    unknownText: P.text2,
+
     // Brand colors
     brand: {
-      navy: '#1e40af',
-      teal: '#14b8a6',
-      indigo: '#1e3a8a'
+      navy: P.sidebar,
+      teal: P.gold,
+      indigo: P.sidebar
     },
-    
+
     // Shadow
-    shadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.3)',
-    cardShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-    cardHoverShadow: '0 4px 12px rgba(0, 0, 0, 0.4)'
+    shadow: 'none',
+    cardShadow: 'none',
+    cardHoverShadow: 'none'
   },
   
   light: {

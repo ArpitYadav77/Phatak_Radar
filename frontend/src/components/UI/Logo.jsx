@@ -13,26 +13,26 @@ export default function Logo({ size = 48, showText = true }) {
         style={{ flexShrink: 0, overflow: 'visible' }}
       >
         {/* Background circle for "P" */}
-        <circle cx="60" cy="35" r="25" fill="none" stroke="#dc2626" strokeWidth="8"/>
+        <circle cx="60" cy="35" r="25" fill="none" stroke="#C8A96B" strokeWidth="8"/>
         
         {/* Vertical stem of "P" */}
-        <rect x="32" y="10" width="8" height="80" fill="#dc2626" rx="2"/>
+        <rect x="32" y="10" width="8" height="80" fill="#C8A96B" rx="2"/>
         
         {/* Railway tracks (left side) */}
         <g>
           {/* Track ties */}
-          <rect x="8" y="18" width="4" height="12" fill="#dc2626" rx="1"/>
-          <rect x="8" y="35" width="4" height="12" fill="#dc2626" rx="1"/>
-          <rect x="8" y="52" width="4" height="12" fill="#dc2626" rx="1"/>
-          <rect x="8" y="69" width="4" height="12" fill="#dc2626" rx="1"/>
+          <rect x="8" y="18" width="4" height="12" fill="#C8A96B" rx="1"/>
+          <rect x="8" y="35" width="4" height="12" fill="#C8A96B" rx="1"/>
+          <rect x="8" y="52" width="4" height="12" fill="#C8A96B" rx="1"/>
+          <rect x="8" y="69" width="4" height="12" fill="#C8A96B" rx="1"/>
           
           {/* Track rails */}
-          <rect x="5" y="15" width="2" height="70" fill="#dc2626"/>
-          <rect x="13" y="15" width="2" height="70" fill="#dc2626"/>
+          <rect x="5" y="15" width="2" height="70" fill="#C8A96B"/>
+          <rect x="13" y="15" width="2" height="70" fill="#C8A96B"/>
         </g>
         
         {/* Signal dot (green indicator) */}
-        <circle cx="70" cy="28" r="8" fill="#22c55e"/>
+        <circle cx="70" cy="28" r="8" fill="#20A879"/>
       </svg>
 
       {/* Text */}
@@ -40,11 +40,12 @@ export default function Logo({ size = 48, showText = true }) {
         <div>
           <div style={{
             fontSize: size > 40 ? '1.5rem' : '1.125rem',
-            fontWeight: '700',
+            fontWeight: '600',
+            letterSpacing: '-0.01em',
             lineHeight: 1.2
           }}>
-            <span style={{ color: '#dc2626' }}>Phatak</span>
-            <span style={{ color: '#f1f5f9' }}> Radar</span>
+            <span style={{ color: '#C8A96B' }}>Phatak</span>
+            <span style={{ color: '#E8EDF3' }}> Radar</span>
           </div>
         </div>
       )}

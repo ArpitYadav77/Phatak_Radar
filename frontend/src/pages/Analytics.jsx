@@ -6,8 +6,11 @@ import {
 import { useRailway } from '../context/RailwayContext';
 import { getAnalyticsSnapshots } from '../context/RailwayContext';
 import { LUDHIANA_TRAINS } from '../lib/trainData';
+import Icon from '../components/UI/Icon';
+import { P } from '../styles/palette';
 
-const COLORS = ['#14b8a6', '#6366f1', '#f59e0b', '#ef4444', '#10b981', '#8b5cf6'];
+const TOOLTIP_STYLE = { backgroundColor: P.card, border: `1px solid ${P.border}`, borderRadius: '6px', color: P.text, fontSize: '0.75rem' };
+const AXIS_TICK = { fontSize: 11, fill: P.muted };
 
 export default function Analytics() {
   const { trains, phataks, alerts, lastUpdated } = useRailway();
@@ -81,23 +84,24 @@ export default function Analytics() {
       else groups.CLEAR++;
     });
     return [
-      { name: 'Critical', value: groups.CRITICAL, color: '#ef4444' },
-      { name: 'Approaching', value: groups.APPROACHING, color: '#f59e0b' },
-      { name: 'Clear', value: groups.CLEAR, color: '#10b981' },
+      { name: 'Critical', value: groups.CRITICAL, color: P.danger },
+      { name: 'Approaching', value: groups.APPROACHING, color: P.warning },
+      { name: 'Clear', value: groups.CLEAR, color: P.success },
     ].filter((d) => d.value > 0);
   }, [trains]);
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '2rem', overflow: 'auto', backgroundColor: '#0a0f1e' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '2rem', overflow: 'auto', backgroundColor: P.bg }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '2rem', fontWeight: 700, color: '#f1f5f9', letterSpacing: '-0.025em' }}>Analytics</h1>
-          <p style={{ margin: 0, fontSize: '0.875rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '0.6875rem', fontWeight: 500, color: P.gold, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Performance</div>
+          <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 600, color: P.text, letterSpacing: '-0.02em' }}>Analytics</h1>
+          <p style={{ margin: 0, fontSize: '0.875rem', color: P.text2, marginTop: '0.375rem' }}>
             Real-time performance · Patiala· {lastUpdated ? `Updated ${lastUpdated.toLocaleTimeString()}` : 'Loading...'}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.75rem', color: '#94a3b8' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.75rem', color: P.muted }}>
           <span>{snapshots.length} historical snapshots</span>
         </div>
       </div>
@@ -105,16 +109,18 @@ export default function Analytics() {
       {/* KPI row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
         {[
-          { label: 'On-Time Rate', value: `${onTimeRate}%`, color: onTimeRate >= 80 ? '#10b981' : '#f59e0b', icon: '🎯' },
-          { label: 'Avg Delay', value: `${avgDelay} min`, color: Number(avgDelay) > 10 ? '#ef4444' : '#f59e0b', icon: '⏰' },
-          { label: 'Max Speed', value: `${maxSpeed} km/h`, color: '#14b8a6', icon: '⚡' },
-          { label: 'Alerts (24h)', value: gateClosure24h, color: gateClosure24h > 0 ? '#ef4444' : '#10b981', icon: '🚨' },
+          { label: 'On-Time Rate', value: `${onTimeRate}%`, color: onTimeRate >= 80 ? P.text2 : P.warning, icon: 'target' },
+          { label: 'Avg Delay', value: `${avgDelay} min`, color: Number(avgDelay) > 0 ? P.warning : P.text2, icon: 'clock' },
+          { label: 'Max Speed', value: `${maxSpeed} km/h`, color: P.info, icon: 'gauge' },
+          { label: 'Alerts (24h)', value: gateClosure24h, color: gateClosure24h > 0 ? P.danger : P.text2, icon: 'alert' },
         ].map((kpi) => (
-          <div key={kpi.label} style={{ backgroundColor: '#1a2332', border: '1px solid #334155', borderRadius: '8px', padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ fontSize: '1.5rem' }}>{kpi.icon}</div>
+          <div key={kpi.label} style={{ backgroundColor: P.card, border: `1px solid ${P.border}`, borderRadius: '8px', padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ width: 36, height: 36, borderRadius: 6, backgroundColor: P.bg, border: `1px solid ${P.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name={kpi.icon} size={18} color={kpi.color} />
+            </div>
             <div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 700, color: kpi.color, letterSpacing: '-0.025em' }}>{kpi.value}</div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>{kpi.label}</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 600, color: P.text, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{kpi.value}</div>
+              <div style={{ fontSize: '0.75rem', color: P.text2, fontWeight: 500 }}>{kpi.label}</div>
             </div>
           </div>
         ))}
@@ -127,11 +133,11 @@ export default function Analytics() {
         <ChartCard title="Speed Distribution" subtitle="Current trains by speed range">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={speedDistribution} barSize={40}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="range" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f1f5f9', fontSize: '0.75rem' }} />
-              <Bar dataKey="count" fill="#14b8a6" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke={P.divider} vertical={false} />
+              <XAxis dataKey="range" tick={AXIS_TICK} stroke={P.border} tickLine={false} />
+              <YAxis tick={AXIS_TICK} stroke={P.border} tickLine={false} axisLine={false} />
+              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: P.cardHover }} />
+              <Bar dataKey="count" fill={P.info} radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -141,16 +147,16 @@ export default function Analytics() {
           {approachDistribution.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
-                <Pie data={approachDistribution} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => `${name}: ${value}`} labelLine={false}>
+                <Pie data={approachDistribution} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => `${name}: ${value}`} labelLine={false} stroke={P.card} strokeWidth={2}>
                   {approachDistribution.map((entry) => (
                     <Cell key={entry.name} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f1f5f9', fontSize: '0.75rem' }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>No trains in area</div>
+            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: P.muted }}>No trains in area</div>
           )}
         </ChartCard>
 
@@ -158,13 +164,13 @@ export default function Analytics() {
         <ChartCard title="Hourly Train Traffic" subtitle="Trains scheduled through Patiala per hour">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={hourlyTraffic} barSize={18}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="hour" tick={{ fontSize: 9, fill: '#64748b' }} interval={3} />
-              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f1f5f9', fontSize: '0.75rem' }} />
-              <Legend />
-              <Bar dataKey="scheduled" name="Scheduled" fill="#6366f1" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="delayed" name="Delayed" fill="#ef4444" radius={[3, 3, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke={P.divider} vertical={false} />
+              <XAxis dataKey="hour" tick={{ fontSize: 9, fill: P.muted }} interval={3} stroke={P.border} tickLine={false} />
+              <YAxis tick={AXIS_TICK} stroke={P.border} tickLine={false} axisLine={false} />
+              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: P.cardHover }} />
+              <Legend wrapperStyle={{ fontSize: '0.75rem', color: P.text2 }} />
+              <Bar dataKey="scheduled" name="Scheduled" fill={P.info} radius={[3, 3, 0, 0]} />
+              <Bar dataKey="delayed" name="Delayed" fill={P.warning} radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -174,16 +180,16 @@ export default function Analytics() {
           {delayByTrain.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={delayByTrain} layout="vertical" barSize={18}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} width={55} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '6px', color: '#f1f5f9', fontSize: '0.75rem' }} formatter={(v) => [`${v} min`, 'Delay']} />
-                <Bar dataKey="delay" fill="#f59e0b" radius={[0, 4, 4, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke={P.divider} horizontal={false} />
+                <XAxis type="number" tick={AXIS_TICK} stroke={P.border} tickLine={false} />
+                <YAxis type="category" dataKey="name" tick={AXIS_TICK} width={55} stroke={P.border} tickLine={false} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: P.cardHover }} formatter={(v) => [`${v} min`, 'Delay']} />
+                <Bar dataKey="delay" fill={P.warning} radius={[0, 3, 3, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexDirection: 'column', gap: '0.5rem' }}>
-              <div style={{ fontSize: '2rem' }}>✅</div>
+            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: P.text2, flexDirection: 'column', gap: '0.625rem' }}>
+              <Icon name="check" size={26} color={P.successText} />
               <div style={{ fontSize: '0.875rem' }}>All trains running on schedule</div>
             </div>
           )}
@@ -192,16 +198,16 @@ export default function Analytics() {
 
       {/* Recent alerts */}
       {alerts.length > 0 && (
-        <div style={{ backgroundColor: '#1a2332', border: '1px solid #334155', borderRadius: '8px', padding: '1.5rem' }}>
-          <h3 style={{ margin: '0 0 1rem', fontSize: '1rem', fontWeight: 700, color: '#f1f5f9' }}>Recent Gate Alerts</h3>
+        <div style={{ backgroundColor: P.card, border: `1px solid ${P.border}`, borderRadius: '8px', padding: '1.5rem' }}>
+          <h3 style={{ margin: '0 0 1rem', fontSize: '0.9375rem', fontWeight: 600, color: P.text }}>Recent Gate Alerts</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '200px', overflowY: 'auto' }}>
             {alerts.slice(0, 10).map((alert, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.625rem 0.875rem', backgroundColor: '#0f172a', borderRadius: '6px', fontSize: '0.8rem' }}>
-                <span>{alert.alertType === 'CRITICAL' ? '🚨' : alert.alertType === 'APPROACHING' ? '⚠️' : '✅'}</span>
-                <span style={{ color: '#f1f5f9', fontWeight: 600 }}>{alert.phatakName}</span>
-                <span style={{ color: '#94a3b8' }}>·</span>
-                <span style={{ color: '#94a3b8' }}>{alert.trainName} ({alert.trainNumber})</span>
-                <span style={{ color: '#64748b', marginLeft: 'auto', fontFamily: 'monospace', fontSize: '0.7rem' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.625rem 0.875rem', backgroundColor: P.bg, border: `1px solid ${P.divider}`, borderRadius: '6px', fontSize: '0.8rem' }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, backgroundColor: alert.alertType === 'CRITICAL' ? P.danger : alert.alertType === 'APPROACHING' ? P.warning : P.success }} />
+                <span style={{ color: P.text, fontWeight: 500 }}>{alert.phatakName}</span>
+                <span style={{ color: P.muted }}>·</span>
+                <span style={{ color: P.text2 }}>{alert.trainName} ({alert.trainNumber})</span>
+                <span style={{ color: P.muted, marginLeft: 'auto', fontVariantNumeric: 'tabular-nums', fontSize: '0.7rem' }}>
                   {new Date(alert.timestamp).toLocaleString()}
                 </span>
               </div>
@@ -215,10 +221,10 @@ export default function Analytics() {
 
 function ChartCard({ title, subtitle, children }) {
   return (
-    <div style={{ backgroundColor: '#1a2332', border: '1px solid #334155', borderRadius: '8px', padding: '1.5rem' }}>
-      <div style={{ marginBottom: '1rem' }}>
-        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#f1f5f9' }}>{title}</h3>
-        {subtitle && <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '0.125rem' }}>{subtitle}</div>}
+    <div style={{ backgroundColor: P.card, border: `1px solid ${P.border}`, borderRadius: '8px', padding: '1.5rem' }}>
+      <div style={{ marginBottom: '1.125rem', paddingBottom: '0.875rem', borderBottom: `1px solid ${P.divider}` }}>
+        <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 600, color: P.text }}>{title}</h3>
+        {subtitle && <div style={{ fontSize: '0.75rem', color: P.muted, marginTop: '0.25rem' }}>{subtitle}</div>}
       </div>
       {children}
     </div>
