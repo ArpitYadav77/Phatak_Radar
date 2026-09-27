@@ -11,26 +11,66 @@
  */
 
 import { request } from 'undici';
+import { getISTParts } from '../utils/time.js';
 
 const RAILRADAR_BASE = 'https://api.railradar.org';
 const TIMEOUT_MS = 10000;
 
+// ─── Source status (reported by /api/health) ──────────────────────────────────
+// Call counter is per serverless instance for now; moves to MongoDB in Phase 2.
+const sourceStatus = {
+  state: process.env.RAILRADAR_API_KEY ? 'unknown' : 'disabled',
+  lastFetch: null,
+  lastError: null,
+  callsDate: null,
+  callsToday: 0,
+};
+
+function recordCall(ok, error = null) {
+  const today = getISTParts().date;
+  if (sourceStatus.callsDate !== today) {
+    sourceStatus.callsDate = today;
+    sourceStatus.callsToday = 0;
+  }
+  sourceStatus.callsToday += 1;
+  sourceStatus.lastFetch = new Date().toISOString();
+  sourceStatus.state = ok ? 'ok' : 'error';
+  sourceStatus.lastError = error;
+  if (!ok) console.error(`❌ [RailRadar] ${error}`);
+}
+
+export function getRailRadarStatus() {
+  const today = getISTParts().date;
+  return {
+    status: sourceStatus.state,
+    lastFetch: sourceStatus.lastFetch,
+    lastError: sourceStatus.lastError,
+    quotaUsedToday: sourceStatus.callsDate === today ? sourceStatus.callsToday : 0,
+  };
+}
+
 /** Fetch all currently running trains with live GPS positions. */
 export async function fetchLiveMap() {
+  if (!process.env.RAILRADAR_API_KEY) {
+    sourceStatus.state = 'disabled';
+    return null;
+  }
   try {
     const { statusCode, body } = await request(
       `${RAILRADAR_BASE}/api/v1/trains/live-map`,
       { headersTimeout: TIMEOUT_MS, bodyTimeout: TIMEOUT_MS }
     );
     if (statusCode !== 200) {
-      console.warn(`[RailRadar] live-map returned ${statusCode}`);
+      await body.dump();
+      recordCall(false, `live-map returned HTTP ${statusCode}`);
       return null;
     }
     const data = await body.json();
+    recordCall(true);
     // data is an array of LiveTrainMapData objects
     return Array.isArray(data) ? data : null;
   } catch (err) {
-    console.warn('[RailRadar] fetchLiveMap failed:', err.message);
+    recordCall(false, `fetchLiveMap failed: ${err.message}`);
     return null;
   }
 }
